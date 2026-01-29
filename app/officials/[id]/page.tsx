@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import GameHistoryTable from '@/app/components/GameHistoryTable'
 
 interface GameDetails {
   id: string
@@ -18,11 +19,17 @@ interface OfficialDetails {
   refereeGames: number
   linespersonGames: number
   games: GameDetails[]
+  pagination: {
+    page: number
+    limit: number
+    totalPages: number
+    totalGames: number
+  }
 }
 
 async function getOfficial(id: string): Promise<OfficialDetails> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-  const res = await fetch(`${baseUrl}/api/officials/${id}`, {
+  const res = await fetch(`${baseUrl}/api/officials/${id}?page=1&limit=50`, {
     cache: 'no-store'
   })
 
@@ -74,68 +81,14 @@ export default async function OfficialPage({
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Game History</h2>
-        <div className="bg-white shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-[#1E1E1E]">
-            <thead className="bg-[#1E1E1E]">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Game
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Report
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-black divide-y divide-[#1E1E1E]">
-              {official.games.map((game: GameDetails) => (
-                <tr key={game.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(game.date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-white font-[]">
-                    {game.awayTeam}  @  {game.homeTeam}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{game.location}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        game.role === 'referee'
-                          ? 'bg-[#4d3200] text-orange-400'
-                          : 'bg-[#002d4d] text-blue-400'
-                      }`}
-                    >
-                      {game.role === 'referee' ? 'Referee' : 'Linesperson'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
-                    <a
-                      href={`https://lscluster.hockeytech.com/game_reports/official-game-report.php?client_code=bchl&game_id=${game.hockeytechId}&lang_id=1`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      View Report
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <h2 className="text-2xl font-bold text-white uppercase mb-4">Game History</h2>
+        <GameHistoryTable
+          officialId={official.id}
+          initialGames={official.games}
+          initialPage={official.pagination.page}
+          totalPages={official.pagination.totalPages}
+          totalGames={official.pagination.totalGames}
+        />
       </div>
     </main>
   )

@@ -128,7 +128,15 @@ async function migrateData(targetUrl: string) {
       try {
         await targetPrisma.game.upsert({
           where: { id: game.id },
-          update: {},
+          update: {
+            hockeytechId: game.hockeytechId,
+            date: game.date,
+            season: game.season,  // Fix: Now updates season for existing games
+            location: game.location,
+            homeTeamId: game.homeTeamId,
+            awayTeamId: game.awayTeamId,
+            updatedAt: game.updatedAt
+          },
           create: {
             id: game.id,
             hockeytechId: game.hockeytechId,
