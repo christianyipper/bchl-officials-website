@@ -3,17 +3,16 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    const seasons = await prisma.game.findMany({
+    const games = await prisma.game.findMany({
       select: {
         season: true
-      },
-      distinct: ['season'],
-      orderBy: {
-        season: 'desc'
       }
     })
 
-    return NextResponse.json(seasons.map(s => s.season))
+    // Get unique seasons and sort descending
+    const uniqueSeasons = [...new Set(games.map(g => g.season))].sort().reverse()
+
+    return NextResponse.json(uniqueSeasons)
   } catch (error) {
     console.error('Error fetching seasons:', error)
     return NextResponse.json(
