@@ -22,11 +22,12 @@ model Team {
 }
 
 model Official {
-  id        String            @id @default(cuid())
-  name      String            @unique
-  games     GameOfficial[]
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  id          String            @id @default(cuid())
+  name        String            @unique
+  original57  Int               @default(0) // 1 if part of original 57 officials, 0 otherwise
+  games       GameOfficial[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 }
 
 model Game {

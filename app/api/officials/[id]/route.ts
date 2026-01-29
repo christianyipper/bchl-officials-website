@@ -100,6 +100,7 @@ export async function GET(
       refereeGames,
       linespersonGames,
       isActive,
+      isOriginal57: official.original57 === 1,
       games,
       pagination: {
         page,

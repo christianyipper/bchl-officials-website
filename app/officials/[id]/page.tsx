@@ -19,6 +19,7 @@ interface OfficialDetails {
   refereeGames: number
   linespersonGames: number
   isActive: boolean
+  isOriginal57: boolean
   games: GameDetails[]
   pagination: {
     page: number
@@ -72,6 +73,11 @@ export default async function OfficialPage({
             }`}>
               {official.isActive ? 'Active' : 'Inactive'}
             </span>
+            {official.isOriginal57 ? (
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-amber-400 text-black">
+                Original 57
+              </span>
+            ) : null}
             <p className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#004d81] text-white">BCHL</p>
           </div>
           <div className="grid grid-cols-3 gap-4">

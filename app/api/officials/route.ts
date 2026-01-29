@@ -53,7 +53,8 @@ export async function GET(request: Request) {
       name: official.name,
       totalGames: official.games.length,
       refereeGames: official.games.filter(g => g.role === 'referee').length,
-      linespersonGames: official.games.filter(g => g.role === 'linesperson').length
+      linespersonGames: official.games.filter(g => g.role === 'linesperson').length,
+      isOriginal57: official.original57 === 1
     }))
 
     return NextResponse.json(officialsWithCounts)
