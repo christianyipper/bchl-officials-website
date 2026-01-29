@@ -75,7 +75,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
 
   if (officials.length === 0) {
     return (
-      <div className="bg-[#F5F5F5] rounded-lg shadow overflow-hidden">
+      <div className="bg-bchl-navy rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-black">
           <thead className="bg-black">
             <tr>
@@ -96,7 +96,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               </th>
             </tr>
           </thead>
-          <tbody className="bg-[#F5F5F5] divide-y divide-black">
+          <tbody className="bg-bchl-navy divide-y divide-black">
             <tr>
               <td colSpan={5} className="px-6 py-12 text-center text-white">
                 No officials found. Start by scraping game data.
@@ -109,7 +109,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
   }
 
   return (
-    <div className="bg-[#F5F5F5] shadow overflow-hidden">
+    <div className="bg-bchl-navy shadow overflow-hidden">
       <table className="min-w-full divide-y divide-bchl-navy">
         <thead className="bg-bchl-navy">
           <tr>
@@ -117,7 +117,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'firstName'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-orange-600 hover:text-black'
+                  : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('firstName')}
             >
@@ -128,7 +128,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'lastName'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-orange-600 hover:text-black'
+                  : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('lastName')}
             >
@@ -139,7 +139,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'totalGames'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-orange-600 hover:text-black'
+                  : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('totalGames')}
             >
@@ -150,7 +150,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'refereeGames'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-orange-600 hover:text-black'
+                  : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('refereeGames')}
             >
@@ -161,7 +161,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'linespersonGames'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-orange-600 hover:text-black'
+                  : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('linespersonGames')}
             >
@@ -170,7 +170,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
             </th>
           </tr>
         </thead>
-        <tbody className="bg-[#F5F5F5] divide-y divide-bchl-navy">
+        <tbody className="bg-bchl-navy divide-y divide-bchl-navy">
           {sortedOfficials.map((official) => {
             const nameParts = official.name.split(' ')
             const firstName = nameParts[0] || ''
