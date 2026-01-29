@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import OfficialsTable from './components/OfficialsTable'
 import SeasonTabs from './components/SeasonTabs'
 
@@ -46,7 +45,8 @@ export default async function Home({
   searchParams: Promise<{ season?: string }>
 }) {
   const params = await searchParams
-  const season = params.season
+  // Default to 2025-26 season if no season parameter or if season is undefined
+  const season = params.season === 'all' ? undefined : (params.season || '2025-26')
   const officials = await getOfficials(season)
   const seasons = await getSeasons()
 
@@ -54,24 +54,10 @@ export default async function Home({
     <main className="min-h-screen bg-black">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-white">BCHL Officials Tracker</h1>
+          <h1 className="font-[zuume] text-[80px] font-bold italic -mb-4 text-white">BCHL Officials Tracker</h1>
           <p className="text-white">Track officials and their game assignments</p>
         </div>
 
-        <nav className="mb-8 flex gap-4">
-          <Link
-            href="/"
-            className="px-4 py-2 bg-orange-600 text-white font-black uppercase text-sm hover:bg-orange-700 transition-colors"
-          >
-            Officials
-          </Link>
-          <Link
-            href="/games"
-            className="px-4 py-2 bg-[#1E1E1E] text-white font-black uppercase text-sm hover:bg-orange-600 transition-colors"
-          >
-            Games
-          </Link>
-        </nav>
 
         <SeasonTabs seasons={seasons} currentSeason={season} />
 

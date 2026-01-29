@@ -55,7 +55,7 @@ export default async function OfficialPage({
         </Link>
 
         <div className="bg-black rounded-lg shadow p-6 mb-8">
-          <h1 className="text-[64px] font-[zuume] font-bold italic text-white">{official.name}</h1>
+          <h1 className="text-[80px] font-[zuume] font-bold italic uppercase text-white">{official.name}</h1>
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-[#0b4000] rounded-lg p-4">
               <div className="text-lg uppercase font-black italic text-white">Total Games</div>
@@ -75,9 +75,9 @@ export default async function OfficialPage({
         </div>
 
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Game History</h2>
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-black">
+        <div className="bg-white shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-[#1E1E1E]">
+            <thead className="bg-[#1E1E1E]">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Date
@@ -96,7 +96,7 @@ export default async function OfficialPage({
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-black divide-y divide-gray-200">
+            <tbody className="bg-black divide-y divide-[#1E1E1E]">
               {official.games.map((game: GameDetails) => (
                 <tr key={game.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -106,8 +106,8 @@ export default async function OfficialPage({
                       day: 'numeric'
                     })}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {game.awayTeam} @ {game.homeTeam}
+                  <td className="px-6 py-4 text-sm text-white font-[]">
+                    {game.awayTeam}  @  {game.homeTeam}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">{game.location}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">

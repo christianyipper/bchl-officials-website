@@ -1,26 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import type { Prisma } from '@prisma/client'
-
-type OfficialWithGames = Prisma.OfficialGetPayload<{
-  include: {
-    games: {
-      include: {
-        game: {
-          include: {
-            homeTeam: true
-            awayTeam: true
-          }
-        }
-      }
-    }
-  }
-}>
-
-type GameOfficialWithRelations = NonNullable<OfficialWithGames['games'][number]>
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -54,25 +36,30 @@ export async function GET(
       )
     }
 
-    // Format the response
-    const formattedOfficial = {
+    // Transform the data to match the expected format
+    const games = official.games.map(gameOfficial => ({
+      id: gameOfficial.game.id,
+      hockeytechId: gameOfficial.game.hockeytechId,
+      date: gameOfficial.game.date.toISOString(),
+      location: gameOfficial.game.location,
+      homeTeam: gameOfficial.game.homeTeam.name,
+      awayTeam: gameOfficial.game.awayTeam.name,
+      role: gameOfficial.role
+    }))
+
+    const refereeGames = games.filter(g => g.role === 'referee').length
+    const linespersonGames = games.filter(g => g.role === 'linesperson').length
+
+    const response = {
       id: official.id,
       name: official.name,
-      totalGames: official.games.length,
-      refereeGames: official.games.filter(g => g.role === 'referee').length,
-      linespersonGames: official.games.filter(g => g.role === 'linesperson').length,
-      games: official.games.map((gameOfficial: GameOfficialWithRelations) => ({
-        id: gameOfficial.game.id,
-        hockeytechId: gameOfficial.game.hockeytechId,
-        date: gameOfficial.game.date,
-        location: gameOfficial.game.location,
-        homeTeam: gameOfficial.game.homeTeam.name,
-        awayTeam: gameOfficial.game.awayTeam.name,
-        role: gameOfficial.role
-      }))
+      totalGames: games.length,
+      refereeGames,
+      linespersonGames,
+      games
     }
 
-    return NextResponse.json(formattedOfficial)
+    return NextResponse.json(response)
   } catch (error) {
     console.error('Error fetching official:', error)
     return NextResponse.json(

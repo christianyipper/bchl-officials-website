@@ -10,11 +10,12 @@ interface SeasonTabsProps {
 export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const activeSeason = currentSeason || searchParams.get('season') || 'all'
+  // Default to 2025-26 season if no season is specified
+  const activeSeason = currentSeason || searchParams.get('season') || '2025-26'
 
   const handleSeasonChange = (season: string) => {
     if (season === 'all') {
-      router.push('/')
+      router.push('/?season=all')
     } else {
       router.push(`/?season=${season}`)
     }
@@ -23,16 +24,6 @@ export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) 
   return (
     <div className="mb-6">
       <div className="flex gap-2 flex-wrap">
-        <button
-          onClick={() => handleSeasonChange('all')}
-          className={`px-4 py-2 font-black uppercase text-sm transition-colors duration-300 ${
-            activeSeason === 'all'
-              ? 'bg-orange-600 text-white'
-              : 'bg-[#1E1E1E] text-white hover:bg-orange-600'
-          }`}
-        >
-          All Time
-        </button>
         {seasons.map((season) => (
           <button
             key={season}
@@ -46,6 +37,16 @@ export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) 
             {season} Season
           </button>
         ))}
+        <button
+          onClick={() => handleSeasonChange('all')}
+          className={`px-4 py-2 font-black uppercase text-sm transition-colors duration-300 ${
+            activeSeason === 'all'
+              ? 'bg-orange-600 text-white'
+              : 'bg-[#1E1E1E] text-white hover:bg-orange-600'
+          }`}
+        >
+          All Time
+        </button>
       </div>
     </div>
   )

@@ -38,7 +38,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
 
   const sortedOfficials = useMemo(() => {
     return [...officials]
-      .filter(official => official.name !== '-' && official.name.trim() !== '')
+      .filter(official => official.name !== '-' && official.name.trim() !== '' && official.totalGames > 0)
       .sort((a, b) => {
         let aValue: string | number
         let bValue: string | number
@@ -114,38 +114,58 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
         <thead className="bg-[#1E1E1E]">
           <tr>
             <th
-              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+                sortField === 'firstName'
+                  ? 'bg-white text-black'
+                  : 'text-white hover:bg-white hover:text-black'
+              }`}
               onClick={() => handleSort('firstName')}
             >
               First Name
               <SortIcon field="firstName" />
             </th>
             <th
-              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+                sortField === 'lastName'
+                  ? 'bg-white text-black'
+                  : 'text-white hover:bg-white hover:text-black'
+              }`}
               onClick={() => handleSort('lastName')}
             >
               Last Name
               <SortIcon field="lastName" />
             </th>
             <th
-              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+                sortField === 'totalGames'
+                  ? 'bg-white text-black'
+                  : 'text-white hover:bg-white hover:text-black'
+              }`}
               onClick={() => handleSort('totalGames')}
             >
               Total Games
               <SortIcon field="totalGames" />
             </th>
             <th
-              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+                sortField === 'refereeGames'
+                  ? 'bg-white text-black'
+                  : 'text-white hover:bg-white hover:text-black'
+              }`}
               onClick={() => handleSort('refereeGames')}
             >
-              Referee
+              As Referee
               <SortIcon field="refereeGames" />
             </th>
             <th
-              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+                sortField === 'linespersonGames'
+                  ? 'bg-white text-black'
+                  : 'text-white hover:bg-white hover:text-black'
+              }`}
               onClick={() => handleSort('linespersonGames')}
             >
-              Linesperson
+              As Linesperson
               <SortIcon field="linespersonGames" />
             </th>
           </tr>
