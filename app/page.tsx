@@ -55,7 +55,7 @@ export default async function Home({
     <main className="min-h-screen bg-black">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="font-[zuume] text-8xl font-bold italic -mb-4 text-white">BCHL Officials Tracker</h1>
+          <h1 className="font-[zuume] text-8xl font-bold italic mb-2 text-white">BCHL Officials Tracker</h1>
           <p className="text-white">Track officials and their game assignments</p>
         </div>
 
