@@ -183,27 +183,27 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
                 <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
-                  sortField === 'firstName' ? 'text-orange-500' : 'text-white'
+                  sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                 }`}>
                   {firstName}
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
-                  sortField === 'lastName' ? 'text-orange-500' : 'text-white'
+                  sortField === 'lastName' ? 'text-bchl-light-orange' : 'text-white'
                 }`}>
                   {lastName}
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
-                  sortField === 'totalGames' ? 'text-orange-500' : 'text-gray-400'
+                  sortField === 'totalGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.totalGames}
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
-                  sortField === 'refereeGames' ? 'text-orange-500' : 'text-gray-400'
+                  sortField === 'refereeGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.refereeGames}
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
-                  sortField === 'linespersonGames' ? 'text-orange-500' : 'text-gray-400'
+                  sortField === 'linespersonGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.linespersonGames}
                 </td>
