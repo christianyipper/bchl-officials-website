@@ -31,7 +31,7 @@ export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) 
             className={`px-4 py-2 font-black uppercase text-sm transition-colors duration-300 ${
               activeSeason === season
                 ? 'bg-orange-600 text-white'
-                : 'bg-gray-900 text-white hover:bg-orange-600'
+                : 'bg-[#1b263d] text-white hover:bg-orange-600'
             }`}
           >
             {season} Season
@@ -42,7 +42,7 @@ export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) 
           className={`px-4 py-2 font-black uppercase text-sm transition-colors duration-300 ${
             activeSeason === 'all'
               ? 'bg-orange-600 text-white'
-              : 'bg-gray-900 text-white hover:bg-orange-600'
+              : 'bg-[#1b263d] text-white hover:bg-orange-600'
           }`}
         >
           All Time

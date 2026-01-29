@@ -103,8 +103,8 @@ export default function GameHistoryTable({
   return (
     <div>
       <div className="bg-white shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-900">
-          <thead className="bg-gray-900">
+        <table className="min-w-full divide-y divide-[#1b263d]">
+          <thead className="bg-[#1b263d]">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                 Date
@@ -120,7 +120,7 @@ export default function GameHistoryTable({
               </th>
             </tr>
           </thead>
-          <tbody className={`bg-black divide-y divide-gray-900 ${loading ? 'opacity-50' : ''}`}>
+          <tbody className={`bg-black divide-y divide-[#1b263d] ${loading ? 'opacity-50' : ''}`}>
             {games.map((game: GameDetails) => (
               <tr
                 key={game.id}
@@ -202,7 +202,7 @@ export default function GameHistoryTable({
                         ? 'z-10 bg-orange-600 border-orange-600 text-white'
                         : page === '...'
                         ? 'border-gray-300 bg-black text-gray-700 cursor-default'
-                        : 'border-gray-800 bg-black text-gray-400 hover:bg-gray-50 hover:border-white'
+                        : 'border-[#1b263d] bg-black text-gray-400 hover:bg-gray-50 hover:border-white'
                     } disabled:cursor-not-allowed`}
                   >
                     {page}

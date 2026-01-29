@@ -101,6 +101,9 @@ export async function GET(
       linespersonGames,
       isActive,
       isOriginal57: official.original57 === 1,
+      isAhl: official.ahl === 1,
+      isEchl: official.echl === 1,
+      isPwhl: official.pwhl === 1,
       games,
       pagination: {
         page,

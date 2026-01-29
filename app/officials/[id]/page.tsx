@@ -20,6 +20,9 @@ interface OfficialDetails {
   linespersonGames: number
   isActive: boolean
   isOriginal57: boolean
+  isAhl: boolean
+  isEchl: boolean
+  isPwhl: boolean
   games: GameDetails[]
   pagination: {
     page: number
@@ -78,7 +81,22 @@ export default async function OfficialPage({
                 Original 57
               </span>
             ) : null}
-            <p className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#004d81] text-white">BCHL</p>
+            <p className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#005a97] text-white">BCHL</p>
+            {official.isAhl ? (
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-red-600 text-white">
+                AHL
+              </span>
+            ) : null}
+            {official.isEchl ? (
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-red-600 text-red">
+                ECHL
+              </span>
+            ) : null}
+            {official.isPwhl ? (
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#450bb9] text-white">
+                PWHL
+              </span>
+            ) : null}
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-[#0b4000] rounded-lg p-4">

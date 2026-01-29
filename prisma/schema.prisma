@@ -25,6 +25,9 @@ model Official {
   id          String            @id @default(cuid())
   name        String            @unique
   original57  Int               @default(0) // 1 if part of original 57 officials, 0 otherwise
+  ahl         Int               @default(0) // 1 if has AHL experience, 0 otherwise
+  echl        Int               @default(0) // 1 if has ECHL experience, 0 otherwise
+  pwhl        Int               @default(0) // 1 if has PWHL experience, 0 otherwise
   games       GameOfficial[]
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
