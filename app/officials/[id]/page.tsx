@@ -55,7 +55,7 @@ export default async function OfficialPage({
         </Link>
 
         <div className="bg-black rounded-lg shadow p-6 mb-8">
-          <h1 className="text-5xl font-[zuume] font-bold italic text-white mb-4">{official.name}</h1>
+          <h1 className="text-[64px] font-[zuume] font-bold italic text-white">{official.name}</h1>
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-[#0b4000] rounded-lg p-4">
               <div className="text-lg uppercase font-black italic text-white">Total Games</div>
