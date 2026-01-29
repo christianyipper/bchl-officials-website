@@ -1,0 +1,187 @@
+'use client'
+
+import { useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
+
+interface OfficialSummary {
+  id: string
+  name: string
+  totalGames: number
+  refereeGames: number
+  linespersonGames: number
+}
+
+type SortField = 'firstName' | 'lastName' | 'totalGames' | 'refereeGames' | 'linespersonGames'
+type SortDirection = 'asc' | 'desc'
+
+interface OfficialsTableProps {
+  officials: OfficialSummary[]
+}
+
+export default function OfficialsTable({ officials }: OfficialsTableProps) {
+  const router = useRouter()
+  const [sortField, setSortField] = useState<SortField>('totalGames')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      // Toggle direction if clicking the same field
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      // Set new field
+      setSortField(field)
+      // Numeric fields default to descending (highest first), text fields to ascending
+      const isNumericField = field === 'totalGames' || field === 'refereeGames' || field === 'linespersonGames'
+      setSortDirection(isNumericField ? 'desc' : 'asc')
+    }
+  }
+
+  const sortedOfficials = useMemo(() => {
+    return [...officials]
+      .filter(official => official.name !== '-' && official.name.trim() !== '')
+      .sort((a, b) => {
+        let aValue: string | number
+        let bValue: string | number
+
+        if (sortField === 'firstName') {
+          aValue = a.name.split(' ')[0]?.toLowerCase() || ''
+          bValue = b.name.split(' ')[0]?.toLowerCase() || ''
+        } else if (sortField === 'lastName') {
+          const aParts = a.name.split(' ')
+          const bParts = b.name.split(' ')
+          aValue = aParts[aParts.length - 1]?.toLowerCase() || ''
+          bValue = bParts[bParts.length - 1]?.toLowerCase() || ''
+        } else {
+          aValue = a[sortField]
+          bValue = b[sortField]
+        }
+
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
+        return 0
+      })
+  }, [officials, sortField, sortDirection])
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) {
+      return <span className="ml-1 text-gray-400">↕</span>
+    }
+    return (
+      <span className="ml-1">
+        {sortDirection === 'asc' ? '↑' : '↓'}
+      </span>
+    )
+  }
+
+  if (officials.length === 0) {
+    return (
+      <div className="bg-[#F5F5F5] rounded-lg shadow overflow-hidden">
+        <table className="min-w-full divide-y divide-black">
+          <thead className="bg-black">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                First Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                Last Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                Total Games
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                As Referee
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                As Linesperson
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-[#F5F5F5] divide-y divide-black">
+            <tr>
+              <td colSpan={5} className="px-6 py-12 text-center text-white">
+                No officials found. Start by scraping game data.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-[#F5F5F5] shadow overflow-hidden">
+      <table className="min-w-full divide-y divide-[#1E1E1E]">
+        <thead className="bg-[#1E1E1E]">
+          <tr>
+            <th
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              onClick={() => handleSort('firstName')}
+            >
+              First Name
+              <SortIcon field="firstName" />
+            </th>
+            <th
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              onClick={() => handleSort('lastName')}
+            >
+              Last Name
+              <SortIcon field="lastName" />
+            </th>
+            <th
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              onClick={() => handleSort('totalGames')}
+            >
+              Total Games
+              <SortIcon field="totalGames" />
+            </th>
+            <th
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              onClick={() => handleSort('refereeGames')}
+            >
+              Referee
+              <SortIcon field="refereeGames" />
+            </th>
+            <th
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-gray-300 select-none"
+              onClick={() => handleSort('linespersonGames')}
+            >
+              Linesperson
+              <SortIcon field="linespersonGames" />
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-[#F5F5F5] divide-y divide-[#1E1E1E]">
+          {sortedOfficials.map((official) => {
+            const nameParts = official.name.split(' ')
+            const firstName = nameParts[0] || ''
+            const lastName = nameParts.slice(1).join(' ') || ''
+
+            return (
+              <tr
+                key={official.id}
+                className="bg-black group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
+                onClick={() => router.push(`/officials/${official.id}`)}
+              >
+                <td className="px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase text-white group-hover:text-white">
+                  {firstName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase text-white group-hover:text-white">
+                  {lastName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase text-white group-hover:text-white">
+                  {official.totalGames}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase text-white group-hover:text-white">
+                  {official.refereeGames}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase text-white group-hover:text-white">
+                  {official.linespersonGames}
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+  )
+}

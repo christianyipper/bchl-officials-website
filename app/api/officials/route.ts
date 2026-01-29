@@ -17,8 +17,11 @@ type OfficialWithRelations = Prisma.OfficialGetPayload<{
   }
 }>
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const season = searchParams.get('season')
+
     const officials = await prisma.official.findMany({
       include: {
         games: {
@@ -29,7 +32,14 @@ export async function GET() {
                 awayTeam: true
               }
             }
-          }
+          },
+          ...(season && {
+            where: {
+              game: {
+                season: season
+              }
+            }
+          })
         }
       },
       orderBy: {

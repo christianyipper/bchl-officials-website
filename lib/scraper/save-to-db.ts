@@ -1,6 +1,23 @@
 import { prisma } from '@/lib/prisma'
 import { ScrapedGame } from './types'
 
+// Helper function to determine the season based on game date
+// Hockey season runs from September to April, so:
+// - Games from Sept-Dec use current year as start year (e.g., Sept 2024 = "2024-25")
+// - Games from Jan-Aug use previous year as start year (e.g., Jan 2025 = "2024-25")
+function getSeasonFromDate(date: Date): string {
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1 // getMonth() is 0-indexed
+
+  if (month >= 9) {
+    // September through December
+    return `${year}-${String(year + 1).slice(-2)}`
+  } else {
+    // January through August
+    return `${year - 1}-${String(year).slice(-2)}`
+  }
+}
+
 export async function saveGameToDatabase(game: ScrapedGame) {
   try {
     // Check if game already exists
@@ -28,12 +45,14 @@ export async function saveGameToDatabase(game: ScrapedGame) {
 
     // Parse the date string (format: "Jan 1, 2026")
     const gameDate = new Date(game.date)
+    const season = getSeasonFromDate(gameDate)
 
     // Create the game
     const createdGame = await prisma.game.create({
       data: {
         hockeytechId: game.hockeytechId,
         date: gameDate,
+        season: season,
         location: game.location,
         homeTeamId: homeTeam.id,
         awayTeamId: awayTeam.id

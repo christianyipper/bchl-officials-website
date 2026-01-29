@@ -45,7 +45,7 @@ export default async function OfficialPage({
   const official = await getOfficial(id)
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-black">
       <div className="container mx-auto px-4 py-8">
         <Link
           href="/"
@@ -54,20 +54,20 @@ export default async function OfficialPage({
           ← Back to Officials
         </Link>
 
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{official.name}</h1>
+        <div className="bg-black rounded-lg shadow p-6 mb-8">
+          <h1 className="text-5xl font-[zuume] font-bold italic text-white mb-4">{official.name}</h1>
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-blue-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">Total Games</div>
-              <div className="text-3xl font-bold text-blue-600">{official.totalGames}</div>
+            <div className="bg-[#0b4000] rounded-lg p-4">
+              <div className="text-lg uppercase font-black italic text-white">Total Games</div>
+              <div className="text-4xl font-black italic text-green-400">{official.totalGames}</div>
             </div>
-            <div className="bg-green-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">As Referee</div>
-              <div className="text-3xl font-bold text-green-600">{official.refereeGames}</div>
+            <div className="bg-[#4d3200] rounded-lg p-4">
+              <div className="text-lg uppercase font-black italic text-white">As Referee</div>
+              <div className="text-4xl font-black italic text-orange-400">{official.refereeGames}</div>
             </div>
-            <div className="bg-purple-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">As Linesperson</div>
-              <div className="text-3xl font-bold text-purple-600">
+            <div className="bg-[#002d4d] rounded-lg p-4">
+              <div className="text-lg uppercase font-black italic text-white">As Linesperson</div>
+              <div className="text-4xl font-black italic text-blue-400">
                 {official.linespersonGames}
               </div>
             </div>
@@ -77,26 +77,26 @@ export default async function OfficialPage({
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Game History</h2>
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-black">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Game
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Location
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Report
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-black divide-y divide-gray-200">
               {official.games.map((game: GameDetails) => (
                 <tr key={game.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -114,8 +114,8 @@ export default async function OfficialPage({
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         game.role === 'referee'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-purple-100 text-purple-800'
+                          ? 'bg-[#4d3200] text-orange-400'
+                          : 'bg-[#002d4d] text-blue-400'
                       }`}
                     >
                       {game.role === 'referee' ? 'Referee' : 'Linesperson'}

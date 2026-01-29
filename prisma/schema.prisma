@@ -33,6 +33,7 @@ model Game {
   id           String         @id @default(cuid())
   hockeytechId Int            @unique
   date         DateTime
+  season       String         @default("2024-25") // e.g., "2024-25", "2023-24"
   location     String
   homeTeamId   String
   homeTeam     Team           @relation("HomeTeam", fields: [homeTeamId], references: [id])
@@ -41,6 +42,8 @@ model Game {
   officials    GameOfficial[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+
+  @@index([season])
 }
 
 model GameOfficial {
