@@ -67,8 +67,8 @@ export default async function OfficialPage({
         </Link>
 
         <div className="bg-black rounded-lg shadow p-6 mb-8">
-          <h1 className="text-8xl font-[zuume] font-bold italic uppercase text-white mb-2">{official.name}</h1>
-          <div className="mb-4 flex flex-row align-middle items-center gap-2">
+          <h1 className="text-8xl font-[zuume] font-bold italic uppercase text-white">{official.name}</h1>
+          <div className="mb-6 flex flex-row align-middle items-center gap-2">
             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
               official.isActive
                 ? 'bg-orange-600 text-white'
@@ -77,23 +77,23 @@ export default async function OfficialPage({
               {official.isActive ? 'Active' : 'Inactive'}
             </span>
             {official.isOriginal57 ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-amber-400 text-black">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-amber-700 text-amber-400">
                 Original 57
               </span>
             ) : null}
-            <p className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#005a97] text-white">BCHL</p>
+            <p className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00385e] text-[#005a97]">BCHL</p>
             {official.isAhl ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-red-600 text-white">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-red-900 text-red-600">
                 AHL
               </span>
             ) : null}
             {official.isEchl ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-red-600 text-red">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-red-900 text-red-600">
                 ECHL
               </span>
             ) : null}
             {official.isPwhl ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#450bb9] text-white">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#310884] text-[#490cc5]">
                 PWHL
               </span>
             ) : null}
