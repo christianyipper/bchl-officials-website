@@ -39,39 +39,24 @@ h1 {
   .active-badge-glow::before {
     content: '';
     position: absolute;
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: white;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.6);
+    background: rgb(234, 88, 12);
+    box-shadow: 0 0 10px rgba(234, 88, 12, 0.9), 0 0 15px rgba(234, 88, 12, 0.7);
+    top: 50%;
+    left: 50%;
+    offset-path: path('M 0,-12 Q 30,-12 30,0 Q 30,12 0,12 Q -30,12 -30,0 Q -30,-12 0,-12 Z');
+    offset-rotate: 0deg;
     animation: orbit-border 3s linear infinite;
   }
 
   @keyframes orbit-border {
     0% {
-      top: 0;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    25% {
-      top: 50%;
-      left: 100%;
-      transform: translate(-50%, -50%);
-    }
-    50% {
-      top: 100%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    75% {
-      top: 50%;
-      left: 0;
-      transform: translate(-50%, -50%);
+      offset-distance: 0%;
     }
     100% {
-      top: 0;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      offset-distance: 100%;
     }
   }
 }
