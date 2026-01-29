@@ -81,7 +81,7 @@ export default async function OfficialPage({
                 Original 57
               </span>
             ) : null}
-            <p className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00385e] text-[#007fd3]">BCHL</p>
+            <p className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00385e] text-[#1b91ff]">BCHL</p>
             {official.isAhl ? (
               <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#450000] text-red-500">
                 AHL
@@ -93,7 +93,7 @@ export default async function OfficialPage({
               </span>
             ) : null}
             {official.isPwhl ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#310884] text-[#6112ff]">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#310884] text-[#8244ff]">
                 PWHL
               </span>
             ) : null}
