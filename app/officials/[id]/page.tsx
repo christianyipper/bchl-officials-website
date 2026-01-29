@@ -69,11 +69,12 @@ export default async function OfficialPage({
         <div className="bg-black rounded-lg shadow p-6 mb-8">
           <h1 className="text-8xl font-[zuume] font-bold italic uppercase text-white">{official.name}</h1>
           <div className="mb-6 flex flex-row align-middle items-center gap-2">
-            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase flex items-center ${
               official.isActive
                 ? 'bg-orange-600 text-white active-badge-glow'
                 : 'bg-gray-700 text-gray-300'
             }`}>
+              {official.isActive && <span className="pulse-dot"></span>}
               {official.isActive ? 'Active' : 'Inactive'}
             </span>
             {official.isOriginal57 ? (
