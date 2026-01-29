@@ -114,10 +114,10 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
         <thead className="bg-bchl-navy">
           <tr>
             <th
-              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'firstName'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-white hover:text-black'
+                  : 'text-white hover:bg-orange-600 hover:text-black'
               }`}
               onClick={() => handleSort('firstName')}
             >
@@ -125,10 +125,10 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               <SortIcon field="firstName" />
             </th>
             <th
-              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'lastName'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-white hover:text-black'
+                  : 'text-white hover:bg-orange-600 hover:text-black'
               }`}
               onClick={() => handleSort('lastName')}
             >
@@ -136,10 +136,10 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               <SortIcon field="lastName" />
             </th>
             <th
-              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'totalGames'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-white hover:text-black'
+                  : 'text-white hover:bg-orange-600 hover:text-black'
               }`}
               onClick={() => handleSort('totalGames')}
             >
@@ -147,10 +147,10 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               <SortIcon field="totalGames" />
             </th>
             <th
-              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'refereeGames'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-white hover:text-black'
+                  : 'text-white hover:bg-orange-600 hover:text-black'
               }`}
               onClick={() => handleSort('refereeGames')}
             >
@@ -158,10 +158,10 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
               <SortIcon field="refereeGames" />
             </th>
             <th
-              className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'linespersonGames'
                   ? 'bg-white text-black'
-                  : 'text-white hover:bg-white hover:text-black'
+                  : 'text-white hover:bg-orange-600 hover:text-black'
               }`}
               onClick={() => handleSort('linespersonGames')}
             >
