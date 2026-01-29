@@ -18,6 +18,7 @@ interface OfficialDetails {
   totalGames: number
   refereeGames: number
   linespersonGames: number
+  isActive: boolean
   games: GameDetails[]
   pagination: {
     page: number
@@ -62,7 +63,17 @@ export default async function OfficialPage({
         </Link>
 
         <div className="bg-black rounded-lg shadow p-6 mb-8">
-          <h1 className="text-[80px] font-[zuume] font-bold italic uppercase text-white">{official.name}</h1>
+          <h1 className="text-[80px] font-[zuume] font-bold italic uppercase text-white -mb-4">{official.name}</h1>
+          <div className="mb-4 flex flex-row align-middle items-center gap-2">
+            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+              official.isActive
+                ? 'bg-orange-600 text-white'
+                : 'bg-gray-700 text-gray-300'
+            }`}>
+              {official.isActive ? 'Active' : 'Inactive'}
+            </span>
+            <p className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#004d81] text-white">BCHL</p>
+          </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-[#0b4000] rounded-lg p-4">
               <div className="text-lg uppercase font-black italic text-white">Total Games</div>

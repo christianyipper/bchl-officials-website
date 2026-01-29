@@ -103,8 +103,8 @@ export default function GameHistoryTable({
   return (
     <div>
       <div className="bg-white shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-[#1E1E1E]">
-          <thead className="bg-[#1E1E1E]">
+        <table className="min-w-full divide-y divide-gray-900">
+          <thead className="bg-gray-900">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                 Date
@@ -120,7 +120,7 @@ export default function GameHistoryTable({
               </th>
             </tr>
           </thead>
-          <tbody className={`bg-black divide-y divide-[#1E1E1E] ${loading ? 'opacity-50' : ''}`}>
+          <tbody className={`bg-black divide-y divide-gray-900 ${loading ? 'opacity-50' : ''}`}>
             {games.map((game: GameDetails) => (
               <tr
                 key={game.id}

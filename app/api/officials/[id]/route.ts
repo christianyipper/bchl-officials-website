@@ -82,12 +82,24 @@ export async function GET(
     const totalGames = official._count.games
     const totalPages = Math.ceil(totalGames / limit)
 
+    // Check if official is active (has games in current season: 2025-26)
+    const currentSeasonGames = await prisma.gameOfficial.count({
+      where: {
+        officialId: id,
+        game: {
+          season: '2025-26'
+        }
+      }
+    })
+    const isActive = currentSeasonGames > 0
+
     const response = {
       id: official.id,
       name: official.name,
       totalGames,
       refereeGames,
       linespersonGames,
+      isActive,
       games,
       pagination: {
         page,
