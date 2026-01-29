@@ -21,3 +21,7 @@ body {
   color: var(--foreground);
   font-family: "pennypacker-wide", Helvetica, sans-serif;
 }
+
+h1 {
+  font-size: 6rem;
+}
