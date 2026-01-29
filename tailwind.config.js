@@ -8,7 +8,7 @@ module.exports = {
     extend: {
       colors: {
         'bchl-navy': '#1b263d',
-        'bchl-light-orange': '#ff6714',
+        'bchl-light-orange': '#ff6e1a',
       },
     },
   },
