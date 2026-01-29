@@ -28,6 +28,50 @@ h1 {
 
 @layer utilities {
   .shadow-glow-amber {
-    box-shadow: 0 0 15px rgba(245, 158, 12, 0.6), 0 0 30px rgba(245, 158, 12, 0.4);
+    box-shadow: 0 0 15px rgba(255, 180, 12, 0.6), 0 0 30px rgba(255, 180, 12, 0.4);
+  }
+
+  .active-badge-glow {
+    position: relative;
+    overflow: visible;
+  }
+
+  .active-badge-glow::before {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.6);
+    animation: orbit-border 3s linear infinite;
+  }
+
+  @keyframes orbit-border {
+    0% {
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    25% {
+      top: 50%;
+      left: 100%;
+      transform: translate(-50%, -50%);
+    }
+    50% {
+      top: 100%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    75% {
+      top: 50%;
+      left: 0;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 }

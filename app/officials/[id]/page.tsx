@@ -71,7 +71,7 @@ export default async function OfficialPage({
           <div className="mb-6 flex flex-row align-middle items-center gap-2">
             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
               official.isActive
-                ? 'bg-orange-600 text-white'
+                ? 'bg-orange-600 text-white active-badge-glow'
                 : 'bg-gray-700 text-gray-300'
             }`}>
               {official.isActive ? 'Active' : 'Inactive'}
