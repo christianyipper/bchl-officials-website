@@ -118,15 +118,16 @@ export default function GameHistoryTable({
               <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                 Role
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                Report
-              </th>
             </tr>
           </thead>
           <tbody className={`bg-black divide-y divide-[#1E1E1E] ${loading ? 'opacity-50' : ''}`}>
             {games.map((game: GameDetails) => (
-              <tr key={game.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <tr
+                key={game.id}
+                onClick={() => window.open(`https://lscluster.hockeytech.com/game_reports/official-game-report.php?client_code=bchl&game_id=${game.hockeytechId}&lang_id=1`, '_blank')}
+                className="group hover:bg-orange-600 hover:text-white cursor-pointer transition-colors duration-300"
+              >
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {new Date(game.date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
@@ -136,7 +137,7 @@ export default function GameHistoryTable({
                 <td className="px-6 py-4 text-sm text-white">
                   {game.awayTeam}  @  {game.homeTeam}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">{game.location}</td>
+                <td className="px-6 py-4 text-sm text-gray-400">{game.location}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -147,16 +148,6 @@ export default function GameHistoryTable({
                   >
                     {game.role === 'referee' ? 'Referee' : 'Linesperson'}
                   </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
-                  <a
-                    href={`https://lscluster.hockeytech.com/game_reports/official-game-report.php?client_code=bchl&game_id=${game.hockeytechId}&lang_id=1`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    View Report
-                  </a>
                 </td>
               </tr>
             ))}
@@ -185,7 +176,7 @@ export default function GameHistoryTable({
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-400">
                 Showing <span className="font-medium">{(currentPage - 1) * 50 + 1}</span> to{' '}
                 <span className="font-medium">{Math.min(currentPage * 50, totalGames)}</span> of{' '}
                 <span className="font-medium">{totalGames}</span> games
@@ -211,7 +202,7 @@ export default function GameHistoryTable({
                         ? 'z-10 bg-orange-600 border-orange-600 text-white'
                         : page === '...'
                         ? 'border-gray-300 bg-black text-gray-700 cursor-default'
-                        : 'border-gray-800 bg-black text-gray-700 hover:bg-gray-50 hover:border-white'
+                        : 'border-gray-800 bg-black text-gray-400 hover:bg-gray-50 hover:border-white'
                     } disabled:cursor-not-allowed`}
                   >
                     {page}
