@@ -46,7 +46,7 @@ h1 {
     box-shadow: 0 0 10px rgba(234, 88, 12, 0.9), 0 0 15px rgba(234, 88, 12, 0.7);
     top: 50%;
     left: 50%;
-    offset-path: path('M 0,-12 Q 30,-12 30,0 Q 30,12 0,12 Q -30,12 -30,0 Q -30,-12 0,-12 Z');
+    offset-path: path('M -22,-13 L 22,-13 Q 35,-13 35,0 Q 35,13 22,13 L -22,13 Q -35,13 -35,0 Q -35,-13 -22,-13 Z');
     offset-rotate: 0deg;
     animation: orbit-border 3s linear infinite;
   }
