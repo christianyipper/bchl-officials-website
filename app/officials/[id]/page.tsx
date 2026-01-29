@@ -81,21 +81,21 @@ export default async function OfficialPage({
                 Original 57
               </span>
             ) : null}
-            <p className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00385e] text-[#1b91ff]">BCHL</p>
+            <a href="https://bchl.ca/bchl-officiating-team" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00385e] text-[#25abff] hover:scale-90 duration-300">BCHL</a>
             {official.isAhl ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#450000] text-red-500">
+              <a href="https://theahl.com/on-ice-officials" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#550000] text-red-500">
                 AHL
-              </span>
+              </a>
             ) : null}
             {official.isEchl ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#450000] text-red-500">
+              <a href="https://echl.com/about/officials" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#550000] text-red-500">
                 ECHL
-              </span>
+              </a>
             ) : null}
             {official.isPwhl ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#310884] text-[#8244ff]">
+              <a href="https://www.thepwhl.com/en/news/2025/november/14/pwhl-announces-officiating-leadership-department-and-team-rule-changes-for-2025-26-season" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#310884] text-[#9752ff]">
                 PWHL
-              </span>
+              </a>
             ) : null}
           </div>
           <div className="grid grid-cols-3 gap-4">

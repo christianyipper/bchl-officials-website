@@ -59,7 +59,6 @@ export default async function Home({
           <p className="text-white">Track officials and their game assignments</p>
         </div>
 
-
         <SeasonTabs seasons={seasons} currentSeason={season} />
 
         <OfficialsTable officials={officials} />
