@@ -67,7 +67,7 @@ export default async function OfficialPage({
         </Link>
 
         <div className="bg-black rounded-lg shadow p-6 mb-8">
-          <h1 className="text-8xl font-[zuume] font-bold italic uppercase text-white -mb-4">{official.name}</h1>
+          <h1 className="text-8xl font-[zuume] font-bold italic uppercase text-white mb-2">{official.name}</h1>
           <div className="mb-4 flex flex-row align-middle items-center gap-2">
             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
               official.isActive
