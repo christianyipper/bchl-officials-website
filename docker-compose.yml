@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bchl-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: bchl
+      POSTGRES_PASSWORD: bchl_password
+      POSTGRES_DB: bchl_officials
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

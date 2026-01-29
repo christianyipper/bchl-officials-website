@@ -1,0 +1,39 @@
+name: Daily BCHL Game Scraper
+
+on:
+  schedule:
+    # Runs every day at 2 AM UTC (adjust timezone as needed)
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Scrape new games
+        run: |
+          response=$(curl -X POST ${{ secrets.APP_URL }}/api/scrape \
+            -H "Content-Type: application/json" \
+            -d '{
+              "action": "discover-and-save",
+              "startId": 13606,
+              "endId": 20000,
+              "batchSize": 10
+            }')
+
+          echo "Scrape response:"
+          echo "$response"
+
+          # Check if scrape was successful
+          if echo "$response" | grep -q '"success":true'; then
+            echo "✅ Scrape completed successfully"
+          else
+            echo "❌ Scrape failed"
+            exit 1
+          fi
+
+      - name: Send notification on failure
+        if: failure()
+        run: |
+          echo "Scraping job failed. You can add email/Slack notifications here."
