@@ -1,5 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import type { Prisma } from '@prisma/client'
+
+type OfficialWithGames = Prisma.OfficialGetPayload<{
+  include: {
+    games: {
+      include: {
+        game: {
+          include: {
+            homeTeam: true
+            awayTeam: true
+          }
+        }
+      }
+    }
+  }
+}>
+
+type GameOfficialWithRelations = NonNullable<OfficialWithGames['games'][number]>
 
 export async function GET(
   request: NextRequest,
@@ -43,7 +61,7 @@ export async function GET(
       totalGames: official.games.length,
       refereeGames: official.games.filter(g => g.role === 'referee').length,
       linespersonGames: official.games.filter(g => g.role === 'linesperson').length,
-      games: official.games.map(gameOfficial => ({
+      games: official.games.map((gameOfficial: GameOfficialWithRelations) => ({
         id: gameOfficial.game.id,
         hockeytechId: gameOfficial.game.hockeytechId,
         date: gameOfficial.game.date,

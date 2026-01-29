@@ -1,6 +1,14 @@
 import Link from 'next/link'
 
-async function getOfficials() {
+interface OfficialSummary {
+  id: string
+  name: string
+  totalGames: number
+  refereeGames: number
+  linespersonGames: number
+}
+
+async function getOfficials(): Promise<OfficialSummary[]> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
   const res = await fetch(`${baseUrl}/api/officials`, {
     cache: 'no-store'
@@ -68,7 +76,7 @@ export default async function Home() {
                   </td>
                 </tr>
               ) : (
-                officials.map((official: any) => (
+                officials.map((official: OfficialSummary) => (
                   <tr key={official.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {official.name}

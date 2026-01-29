@@ -1,5 +1,18 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import type { Prisma } from '@prisma/client'
+
+type GameWithRelations = Prisma.GameGetPayload<{
+  include: {
+    homeTeam: true
+    awayTeam: true
+    officials: {
+      include: {
+        official: true
+      }
+    }
+  }
+}>
 
 export async function GET() {
   try {
@@ -19,7 +32,7 @@ export async function GET() {
     })
 
     // Format the response
-    const formattedGames = games.map(game => ({
+    const formattedGames = games.map((game: GameWithRelations) => ({
       id: game.id,
       hockeytechId: game.hockeytechId,
       date: game.date,

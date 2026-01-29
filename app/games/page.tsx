@@ -1,6 +1,22 @@
 import Link from 'next/link'
 
-async function getGames() {
+interface Official {
+  id: string
+  name: string
+}
+
+interface Game {
+  id: string
+  hockeytechId: number
+  date: string
+  location: string
+  homeTeam: string
+  awayTeam: string
+  referees: Official[]
+  linespeople: Official[]
+}
+
+async function getGames(): Promise<Game[]> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
   const res = await fetch(`${baseUrl}/api/games`, {
     cache: 'no-store'
@@ -72,7 +88,7 @@ export default async function GamesPage() {
                     </td>
                   </tr>
                 ) : (
-                  games.map((game: any) => (
+                  games.map((game: Game) => (
                     <tr key={game.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(game.date).toLocaleDateString('en-US', {
@@ -91,7 +107,7 @@ export default async function GamesPage() {
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {game.referees.length > 0 ? (
                           <div className="space-y-1">
-                            {game.referees.map((ref: any) => (
+                            {game.referees.map((ref: Official) => (
                               <div key={ref.id}>
                                 <Link
                                   href={`/officials/${ref.id}`}
@@ -109,7 +125,7 @@ export default async function GamesPage() {
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {game.linespeople.length > 0 ? (
                           <div className="space-y-1">
-                            {game.linespeople.map((linesperson: any) => (
+                            {game.linespeople.map((linesperson: Official) => (
                               <div key={linesperson.id}>
                                 <Link
                                   href={`/officials/${linesperson.id}`}

@@ -1,7 +1,26 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-async function getOfficial(id: string) {
+interface GameDetails {
+  id: string
+  hockeytechId: number
+  date: string
+  location: string
+  homeTeam: string
+  awayTeam: string
+  role: string
+}
+
+interface OfficialDetails {
+  id: string
+  name: string
+  totalGames: number
+  refereeGames: number
+  linespersonGames: number
+  games: GameDetails[]
+}
+
+async function getOfficial(id: string): Promise<OfficialDetails> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
   const res = await fetch(`${baseUrl}/api/officials/${id}`, {
     cache: 'no-store'
@@ -78,7 +97,7 @@ export default async function OfficialPage({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {official.games.map((game: any) => (
+              {official.games.map((game: GameDetails) => (
                 <tr key={game.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(game.date).toLocaleDateString('en-US', {
