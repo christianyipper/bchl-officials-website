@@ -77,7 +77,7 @@ export default async function OfficialPage({
               {official.isActive ? 'Active' : 'Inactive'}
             </span>
             {official.isOriginal57 ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-amber-700 text-amber-400">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-amber-700 text-amber-400 border border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.6),0_0_30px_rgba(251,191,36,0.4)]">
                 Original 57
               </span>
             ) : null}
