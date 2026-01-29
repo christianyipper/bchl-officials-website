@@ -25,3 +25,9 @@ body {
 h1 {
   font-size: 6rem;
 }
+
+@layer utilities {
+  .shadow-glow-amber {
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.6), 0 0 30px rgba(251, 191, 36, 0.4);
+  }
+}
