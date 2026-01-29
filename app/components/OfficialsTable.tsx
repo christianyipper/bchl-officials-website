@@ -110,8 +110,8 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
 
   return (
     <div className="bg-[#F5F5F5] shadow overflow-hidden">
-      <table className="min-w-full divide-y divide-[#1b263d]">
-        <thead className="bg-[#1b263d]">
+      <table className="min-w-full divide-y divide-bchl-navy">
+        <thead className="bg-bchl-navy">
           <tr>
             <th
               className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
@@ -170,7 +170,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
             </th>
           </tr>
         </thead>
-        <tbody className="bg-[#F5F5F5] divide-y divide-[#1b263d]">
+        <tbody className="bg-[#F5F5F5] divide-y divide-bchl-navy">
           {sortedOfficials.map((official) => {
             const nameParts = official.name.split(' ')
             const firstName = nameParts[0] || ''
