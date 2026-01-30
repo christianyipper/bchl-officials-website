@@ -209,18 +209,18 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                       BCHL
                     </span>
                     {official.isAhl && (
-                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#0048cd] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
                         AHL
-                      </span>
-                    )}
-                    {official.isEchl && (
-                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
-                        ECHL
                       </span>
                     )}
                     {official.isPwhl && (
                       <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#550de7] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
                         PWHL
+                      </span>
+                    )}
+                    {official.isEchl && (
+                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                        ECHL
                       </span>
                     )}
                   </div>
