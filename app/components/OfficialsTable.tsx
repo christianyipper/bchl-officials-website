@@ -84,7 +84,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
         <table className="min-w-full divide-y divide-black">
           <thead className="bg-black">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-64">
                 First Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
@@ -119,7 +119,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
         <thead className="bg-bchl-navy">
           <tr>
             <th
-              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 w-64 ${
                 sortField === 'firstName'
                   ? 'bg-white text-black'
                   : 'text-white hover:bg-orange-600'
@@ -187,7 +187,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                 className="bg-black group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 w-64">
                   <div className={`text-lg italic font-black uppercase group-hover:text-white ${
                     sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                   }`}>
@@ -195,28 +195,31 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2 h-6">
                     {official.isActive && (
-                      <span className="px-0 group-hover:px-2 h-1 w-1 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
                         <span className="w-0 group-hover:w-1 h-1 rounded-full bg-white group-hover:mr-1 animate-pulse"></span>
                         Active
                       </span>
                     )}
                     {official.isOriginal57 && (
-                      <span className="px-0 group-hover:px-2 h-1 w-1 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#ffcf0e] text-transparent group-hover:text-[#ffcf0e] group-hover:bg-[#a66600] border border-[#ffcf0e] transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#ffcf0e] text-transparent group-hover:text-[#ffcf0e] group-hover:bg-[#a66600] border border-[#ffcf0e] transition-all duration-300 flex items-center overflow-hidden">
                         OG:57
                       </span>
                     )}
+                    <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#0067de] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                      BCHL
+                    </span>
                     {official.isAhl && (
-                      <span className="px-0 group-hover:px-2 h-1 w-1 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
                         AHL
                       </span>
                     )}
                     {official.isEchl && (
-                      <span className="px-0 group-hover:px-2 h-1 w-1 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
                         ECHL
                       </span>
                     )}
                     {official.isPwhl && (
-                      <span className="px-0 group-hover:px-2 h-1 w-1 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#550de7] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#550de7] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
                         PWHL
                       </span>
                     )}
