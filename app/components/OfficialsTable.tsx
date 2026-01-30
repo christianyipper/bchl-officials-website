@@ -187,7 +187,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                 className="bg-black group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className="pl-6 py-4 w-[348px] align-top">
+                <td className="pl-6 py-4 w-[350px] align-top">
                   <div className={`text-lg italic font-black uppercase group-hover:text-white ${
                     sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                   }`}>
@@ -202,7 +202,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                     )}
                     {official.isOriginal57 && (
                       <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#ffcf0e] text-transparent group-hover:text-[#ffcf0e] group-hover:bg-[#a66600] border border-[#ffcf0e] shadow-glow-amber transition-all duration-300 flex items-center overflow-hidden">
-                        OG:57
+                        OG : 57
                       </span>
                     )}
                     <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#0067de] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
