@@ -187,13 +187,13 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                 className="bg-black group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className="px-6 py-4 w-64">
+                <td className="px-6 py-4 min-w-80 align-top">
                   <div className={`text-lg italic font-black uppercase group-hover:text-white ${
                     sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                   }`}>
                     {firstName}
                   </div>
-                  <div className="flex flex-wrap gap-1 mt-2 h-6">
+                  <div className="flex flex-nowrap gap-1 mt-2 h-6">
                     {official.isActive && (
                       <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-6 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
                         <span className="w-0 group-hover:w-1 h-1 rounded-full bg-white group-hover:mr-1 animate-pulse"></span>
@@ -225,22 +225,22 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                     )}
                   </div>
                 </td>
-                <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'lastName' ? 'text-bchl-light-orange' : 'text-white'
                 }`}>
                   {lastName}
                 </td>
-                <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'totalGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.totalGames}
                 </td>
-                <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'refereeGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.refereeGames}
                 </td>
-                <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'linespersonGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.linespersonGames}
