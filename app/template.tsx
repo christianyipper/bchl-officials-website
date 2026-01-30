@@ -6,7 +6,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
   // Custom stagger order: 2, 4, 1, 6, 3, 5
   // Column 2 (idx 1) = 0s, Column 4 (idx 3) = 0.1s, Column 1 (idx 0) = 0.2s,
   // Column 6 (idx 5) = 0.3s, Column 3 (idx 2) = 0.4s, Column 5 (idx 4) = 0.5s
-  const delayOrder = [0.2, 0, 0.4, 0.1, 0.5, 0.3]
+  const delayOrder = [0, 0.1, 0.2, 0.3, 0.4, 0.5]
 
   // White line stagger order: 10,4,9,1,6,3,12,2,7,5,8,11
   // Convert positions (1-12) to delay multipliers (0-11)
@@ -14,6 +14,19 @@ export default function Template({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      {/* Initial full-screen drop */}
+      <motion.div
+        className="fixed inset-0 z-[99] pointer-events-none bg-orange-600"
+        initial={{ y: '-100%' }}
+        animate={{ y: ['-100%', '0%', '0%', '100%'] }}
+        transition={{
+          duration: 2.0,
+          times: [0, 0.25, 0.5, 1],
+          ease: [0.22, 1, 0.36, 1] as any,
+          delay: 0,
+        }}
+      />
+
       {/* Page transition overlay - 6 columns */}
       <div className="fixed inset-0 z-[100] pointer-events-none flex">
         {[0, 1, 2, 3, 4, 5].map((i) => (
