@@ -82,7 +82,7 @@ export default async function OfficialPage({
                 OG : 57
               </a>
             ) : null}
-            <a href="https://bchl.ca/bchl-officiating-team" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#0067de] text-white hover:scale-90 duration-300">BCHL</a>
+            <a href="https://bchl.ca/bchl-officiating-team" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-white text-black hover:scale-90 duration-300">BCHL</a>
             {official.isAhl ? (
               <a href="https://theahl.com/on-ice-officials" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#c70000] text-white hover:scale-90 duration-300">
                 AHL
