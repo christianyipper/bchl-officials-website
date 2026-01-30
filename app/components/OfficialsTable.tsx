@@ -193,32 +193,33 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                   }`}>
                     {firstName}
                   </div>
-                  <div className="flex flex-wrap gap-1 mt-2">
+                  <div className="flex flex-wrap gap-1 mt-2 h-6">
                     {official.isActive && (
-                      <span className="w-1 h-1 animate-pulse rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent">
-                        
+                      <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent group-hover:text-white transition-all duration-300 flex items-center">
+                        <span className="w-1 h-1 rounded-full bg-white mr-1 animate-pulse group-hover:block hidden"></span>
+                        Active
                       </span>
                     )}
                     {official.isOriginal57 && (
-                      <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#ffcf0e] text-transparent">
+                      <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#a66600] text-transparent group-hover:text-[#ffcf0e] border border-[#ffcf0e] transition-all duration-300 flex items-center">
                         OG:57
                       </span>
                     )}
-                    <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#0067de] text-transparent">
+                    <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#0067de] text-transparent group-hover:text-white transition-all duration-300 flex items-center">
                       BCHL
                     </span>
                     {official.isAhl && (
-                      <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent">
+                      <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center">
                         AHL
                       </span>
                     )}
                     {official.isEchl && (
-                      <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent">
+                      <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center">
                         ECHL
                       </span>
                     )}
                     {official.isPwhl && (
-                      <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#550de7] text-transparent">
+                      <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#550de7] text-transparent group-hover:text-white transition-all duration-300 flex items-center">
                         PWHL
                       </span>
                     )}
