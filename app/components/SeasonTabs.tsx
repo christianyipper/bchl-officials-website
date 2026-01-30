@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 
 interface SeasonTabsProps {
   seasons: string[]
@@ -10,14 +10,15 @@ interface SeasonTabsProps {
 export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
   // Default to 2025-26 season if no season is specified
   const activeSeason = currentSeason || searchParams.get('season') || '2025-26'
 
   const handleSeasonChange = (season: string) => {
     if (season === 'all') {
-      router.push('/?season=all')
+      router.push(`${pathname}?season=all`)
     } else {
-      router.push(`/?season=${season}`)
+      router.push(`${pathname}?season=${season}`)
     }
   }
 
@@ -31,7 +32,7 @@ export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) 
             className={`px-4 py-2 font-black uppercase text-sm transition-colors duration-300 ${
               activeSeason === season
                 ? 'bg-orange-600 text-white'
-                : 'bg-[#1b263d] text-white hover:bg-orange-600'
+                : 'bg-white text-black hover:bg-orange-600 hover:text-white'
             }`}
           >
             {season} Season
@@ -42,7 +43,7 @@ export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) 
           className={`px-4 py-2 font-black uppercase text-sm transition-colors duration-300 ${
             activeSeason === 'all'
               ? 'bg-orange-600 text-white'
-              : 'bg-[#1b263d] text-white hover:bg-orange-600'
+              : 'bg-white text-black hover:bg-orange-600 hover:text-white'
           }`}
         >
           All Time

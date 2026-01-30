@@ -106,16 +106,16 @@ export default function GameHistoryTable({
         <table className="min-w-full divide-y divide-[#1b263d]">
           <thead className="bg-[#1b263d]">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                 Date
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                 Game
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                 Location
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                 Role
               </th>
             </tr>
@@ -140,10 +140,10 @@ export default function GameHistoryTable({
                 <td className="px-6 py-4 text-sm text-gray-400 group-hover:text-white">{game.location}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
                       game.role === 'referee'
-                        ? 'bg-[#4d3200] text-orange-400'
-                        : 'bg-[#002d4d] text-blue-400'
+                        ? 'bg-white text-black'
+                        : 'bg-transparent text-white border-2 border-white'
                     }`}
                   >
                     {game.role === 'referee' ? 'Referee' : 'Linesperson'}
@@ -157,7 +157,7 @@ export default function GameHistoryTable({
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="bg-black px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div className="bg-black px-4 py-3 flex items-center justify-between border-t border-bchl-navy sm:px-6">
           <div className="flex-1 flex justify-between sm:hidden">
             <button
               onClick={handlePrevious}
@@ -177,7 +177,7 @@ export default function GameHistoryTable({
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-400">
-                Showing <span className="font-medium">{(currentPage - 1) * 50 + 1}</span> to{' '}
+                Showing <span className="font-medium">{(currentPage - 1) * 50 + 1}</span> -{' '}
                 <span className="font-medium">{Math.min(currentPage * 50, totalGames)}</span> of{' '}
                 <span className="font-medium">{totalGames}</span> games
               </p>
@@ -187,7 +187,7 @@ export default function GameHistoryTable({
                 <button
                   onClick={handlePrevious}
                   disabled={currentPage === 1 || loading}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 bg-black text-sm font-bold text-white hover:bg-orange-600 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Previous</span>
                   ←
@@ -197,12 +197,12 @@ export default function GameHistoryTable({
                     key={index}
                     onClick={() => typeof page === 'number' && handlePageClick(page)}
                     disabled={page === '...' || page === currentPage || loading}
-                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                    className={`relative inline-flex items-center px-4 py-2 text-sm font-bold transition-colors duration-300 ${
                       page === currentPage
-                        ? 'z-10 bg-orange-600 border-orange-600 text-white'
+                        ? 'z-10 bg-orange-600 text-white'
                         : page === '...'
-                        ? 'border-gray-300 bg-black text-gray-700 cursor-default'
-                        : 'border-[#1b263d] bg-black text-gray-400 hover:bg-gray-50 hover:border-white'
+                        ? ' bg-black text-gray-700 cursor-default'
+                        : ' bg-black text-gray-400 hover:bg-orange-600 hover:text-white'
                     } disabled:cursor-not-allowed`}
                   >
                     {page}
@@ -211,7 +211,7 @@ export default function GameHistoryTable({
                 <button
                   onClick={handleNext}
                   disabled={currentPage === totalPages || loading}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 bg-black text-sm font-bold text-white hover:bg-orange-600 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Next</span>
                   →

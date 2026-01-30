@@ -27,6 +27,8 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
   const router = useRouter()
   const [sortField, setSortField] = useState<SortField>('totalGames')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 50
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -66,6 +68,73 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
         return 0
       })
   }, [officials, sortField, sortDirection])
+
+  // Calculate pagination
+  const totalItems = sortedOfficials.length
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedOfficials = sortedOfficials.slice(startIndex, endIndex)
+
+  // Reset to page 1 when sort changes
+  useMemo(() => {
+    setCurrentPage(1)
+  }, [sortField, sortDirection])
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
+  const handlePageClick = (page: number) => {
+    if (page !== currentPage) {
+      setCurrentPage(page)
+    }
+  }
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = []
+    const maxVisible = 7
+
+    if (totalPages <= maxVisible) {
+      // Show all pages
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i)
+      }
+    } else {
+      // Always show first page
+      pages.push(1)
+
+      if (currentPage > 3) {
+        pages.push('...')
+      }
+
+      // Show pages around current page
+      const start = Math.max(2, currentPage - 1)
+      const end = Math.min(totalPages - 1, currentPage + 1)
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i)
+      }
+
+      if (currentPage < totalPages - 2) {
+        pages.push('...')
+      }
+
+      // Always show last page
+      pages.push(totalPages)
+    }
+
+    return pages
+  }
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
@@ -115,13 +184,13 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
 
   return (
     <div className="bg-bchl-navy shadow overflow-hidden">
-      <table className="min-w-full divide-y divide-bchl-navy">
+      <table className="min-w-full">
         <thead className="bg-bchl-navy">
           <tr>
             <th
-              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 w-64 ${
+              className={`pl-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'firstName'
-                  ? 'bg-white text-black'
+                  ? 'bg-orange-600 text-white'
                   : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('firstName')}
@@ -132,7 +201,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
             <th
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'lastName'
-                  ? 'bg-white text-black'
+                  ? 'bg-orange-600 text-white'
                   : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('lastName')}
@@ -143,7 +212,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
             <th
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'totalGames'
-                  ? 'bg-white text-black'
+                  ? 'bg-orange-600 text-white'
                   : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('totalGames')}
@@ -154,7 +223,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
             <th
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'refereeGames'
-                  ? 'bg-white text-black'
+                  ? 'bg-orange-600 text-white'
                   : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('refereeGames')}
@@ -165,7 +234,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
             <th
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'linespersonGames'
-                  ? 'bg-white text-black'
+                  ? 'bg-orange-600 text-white'
                   : 'text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('linespersonGames')}
@@ -176,7 +245,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
           </tr>
         </thead>
         <tbody className="bg-bchl-navy divide-y divide-bchl-navy">
-          {sortedOfficials.map((official) => {
+          {paginatedOfficials.map((official) => {
             const nameParts = official.name.split(' ')
             const firstName = nameParts[0] || ''
             const lastName = nameParts.slice(1).join(' ') || ''
@@ -187,39 +256,39 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                 className="bg-black group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className="pl-6 py-4 w-[350px] align-top">
+                <td className="pl-6 py-3 w-[286px] align-top">
                   <div className={`text-lg italic font-black uppercase group-hover:text-white ${
                     sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                   }`}>
                     {firstName}
                   </div>
-                  <div className="flex flex-nowrap items-start gap-1 mt-1 h-5">
+                  <div className="flex flex-nowrap items-start gap-1 h-5">
                     {official.isActive && (
-                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden animate-pulse group-hover:animate-none">
-                        <span className="w-0 group-hover:w-1 h-1 rounded-full bg-white group-hover:mr-1 animate-pulse"></span>
+                      <span className="px-0 group-hover:pr-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden animate-pulse group-hover:animate-none">
+                        <span className="w-0 group-hover:w-1.5 h-1.5 rounded-full bg-white group-hover:mr-1 animate-pulse"></span>
                         Active
                       </span>
                     )}
                     {official.isOriginal57 && (
-                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#ffd000] text-transparent group-hover:text-[#ffd000] group-hover:bg-black border border-[#ffd000] shadow-glow-amber transition-all duration-300 flex items-center overflow-hidden">
-                        OG : 57
+                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-transparent text-transparent group-hover:text-white group-hover:bg-transparent border-2 border-white transition-all duration-300 flex items-center overflow-hidden">
+                        OG
                       </span>
                     )}
-                    <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent group-hover:text-black transition-all duration-300 flex items-center overflow-hidden">
+                    <span className="px-0 group-hover:px-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent group-hover:text-white group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
                       BCHL
                     </span>
                     {official.isAhl && (
-                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#0048cd] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent group-hover:text-white group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
                         AHL
                       </span>
                     )}
                     {official.isPwhl && (
-                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#550de7] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent group-hover:text-white group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
                         PWHL
                       </span>
                     )}
                     {official.isEchl && (
-                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent group-hover:text-white group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
                         ECHL
                       </span>
                     )}
@@ -250,6 +319,73 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
           })}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="bg-black px-4 py-3 flex items-center justify-between border-t border-bchl-navy sm:px-6">
+          <div className="flex-1 flex justify-between sm:hidden">
+            <button
+              onClick={handlePrevious}
+              disabled={currentPage === 1}
+              className="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+              className="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-400">
+                Showing <span className="font-medium">{startIndex + 1}</span> -{' '}
+                <span className="font-medium">{Math.min(endIndex, totalItems)}</span> of{' '}
+                <span className="font-medium">{totalItems}</span> officials
+              </p>
+            </div>
+            <div>
+              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <button
+                  onClick={handlePrevious}
+                  disabled={currentPage === 1}
+                  className="relative inline-flex items-center px-2 py-2 bg-black text-sm font-bold text-white hover:bg-orange-600 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="sr-only">Previous</span>
+                  ←
+                </button>
+                {getPageNumbers().map((page, index) => (
+                  <button
+                    key={index}
+                    onClick={() => typeof page === 'number' && handlePageClick(page)}
+                    disabled={page === '...' || page === currentPage}
+                    className={`relative inline-flex items-center px-4 py-2 text-sm font-bold transition-colors duration-300 ${
+                      page === currentPage
+                        ? 'z-10 bg-orange-600 text-white'
+                        : page === '...'
+                        ? ' bg-black text-gray-700 cursor-default'
+                        : ' bg-black text-gray-400 hover:bg-orange-600 hover:text-white'
+                    } disabled:cursor-not-allowed`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={handleNext}
+                  disabled={currentPage === totalPages}
+                  className="relative inline-flex items-center px-2 py-2 bg-black text-sm font-bold text-white hover:bg-orange-600 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="sr-only">Next</span>
+                  →
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,71 +1,45 @@
-import OfficialsTable from './components/OfficialsTable'
-import SeasonTabs from './components/SeasonTabs'
-
-interface OfficialSummary {
-  id: string
-  name: string
-  totalGames: number
-  refereeGames: number
-  linespersonGames: number
-  isActive: boolean
-  isOriginal57: boolean
-  isAhl: boolean
-  isEchl: boolean
-  isPwhl: boolean
-}
-
-async function getOfficials(season?: string): Promise<OfficialSummary[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-  const url = season
-    ? `${baseUrl}/api/officials?season=${season}`
-    : `${baseUrl}/api/officials`
-
-  const res = await fetch(url, {
-    cache: 'no-store'
-  })
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch officials')
-  }
-
-  return res.json()
-}
-
-async function getSeasons(): Promise<string[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-  const res = await fetch(`${baseUrl}/api/seasons`, {
-    cache: 'no-store'
-  })
-
-  if (!res.ok) {
-    return []
-  }
-
-  return res.json()
-}
-
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ season?: string }>
-}) {
-  const params = await searchParams
-  // Default to 2025-26 season if no season parameter or if season is undefined
-  const season = params.season === 'all' ? undefined : (params.season || '2025-26')
-  const officials = await getOfficials(season)
-  const seasons = await getSeasons()
-
+export default function Home() {
   return (
     <main className="min-h-screen bg-black">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="font-[zuume] text-8xl font-bold italic text-white">BCHL Officials Tracker</h1>
-          <p className="text-white">Track officials and their game assignments</p>
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <h1 className="font-[zuume] text-9xl font-bold italic text-white mb-4">
+            BCHL Officials
+          </h1>
+          <p className="text-2xl text-gray-400 font-bold uppercase tracking-wider">
+            Tracking Excellence on the Ice
+          </p>
         </div>
 
-        <SeasonTabs seasons={seasons} currentSeason={season} />
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-20">
+          <div className="bg-bchl-navy p-8 rounded-lg hover:bg-orange-600 transition-colors duration-300 group cursor-pointer">
+            <h2 className="text-3xl font-bold text-white mb-4 group-hover:text-white">
+              Officiating Team
+            </h2>
+            <p className="text-gray-400 group-hover:text-white">
+              Browse our roster of BCHL officials and track their game statistics throughout the season.
+            </p>
+          </div>
 
-        <OfficialsTable officials={officials} />
+          <div className="bg-bchl-navy p-8 rounded-lg hover:bg-orange-600 transition-colors duration-300 group cursor-pointer">
+            <h2 className="text-3xl font-bold text-white mb-4 group-hover:text-white">
+              Combine Results
+            </h2>
+            <p className="text-gray-400 group-hover:text-white">
+              View performance metrics and results from the officials combine assessments.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-16 text-center">
+          <div className="bg-bchl-navy p-8 rounded-lg max-w-2xl mx-auto">
+            <h3 className="text-2xl font-bold text-white mb-4">About This Project</h3>
+            <p className="text-gray-400 leading-relaxed">
+              This platform provides comprehensive tracking and statistics for BCHL officiating staff.
+              Monitor game assignments, performance metrics, and career progression of our dedicated officials.
+            </p>
+          </div>
+        </div>
       </div>
     </main>
   )
