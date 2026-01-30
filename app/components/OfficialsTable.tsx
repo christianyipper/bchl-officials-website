@@ -9,6 +9,11 @@ interface OfficialSummary {
   totalGames: number
   refereeGames: number
   linespersonGames: number
+  isActive: boolean
+  isOriginal57: boolean
+  isAhl: boolean
+  isEchl: boolean
+  isPwhl: boolean
 }
 
 type SortField = 'firstName' | 'lastName' | 'totalGames' | 'refereeGames' | 'linespersonGames'
@@ -182,10 +187,43 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                 className="bg-black group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
-                  sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
-                }`}>
-                  {firstName}
+                <td className="px-6 py-4">
+                  <div className={`text-lg italic font-black uppercase group-hover:text-white ${
+                    sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
+                  }`}>
+                    {firstName}
+                  </div>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {official.isActive && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-orange-600 text-white flex items-center">
+                        <span className="w-1 h-1 rounded-full bg-white mr-1 animate-pulse"></span>
+                        Active
+                      </span>
+                    )}
+                    {official.isOriginal57 && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#a66600] text-[#ffcf0e] border border-[#ffcf0e]">
+                        OG:57
+                      </span>
+                    )}
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#0067de] text-white">
+                      BCHL
+                    </span>
+                    {official.isAhl && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-white">
+                        AHL
+                      </span>
+                    )}
+                    {official.isEchl && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-white">
+                        ECHL
+                      </span>
+                    )}
+                    {official.isPwhl && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#550de7] text-white">
+                        PWHL
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'lastName' ? 'text-bchl-light-orange' : 'text-white'

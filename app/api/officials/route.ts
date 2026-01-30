@@ -54,6 +54,7 @@ export async function GET(request: Request) {
       totalGames: official.games.length,
       refereeGames: official.games.filter(g => g.role === 'referee').length,
       linespersonGames: official.games.filter(g => g.role === 'linesperson').length,
+      isActive: official.active === 1,
       isOriginal57: official.original57 === 1,
       isAhl: official.ahl === 1,
       isEchl: official.echl === 1,

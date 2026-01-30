@@ -7,7 +7,11 @@ interface OfficialSummary {
   totalGames: number
   refereeGames: number
   linespersonGames: number
+  isActive: boolean
   isOriginal57: boolean
+  isAhl: boolean
+  isEchl: boolean
+  isPwhl: boolean
 }
 
 async function getOfficials(season?: string): Promise<OfficialSummary[]> {
