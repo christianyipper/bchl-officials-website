@@ -193,7 +193,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                   }`}>
                     {firstName}
                   </div>
-                  <div className="flex flex-nowrap items-start gap-1 mt-2 h-6">
+                  <div className="flex flex-nowrap items-start gap-1 mt-1 h-5">
                     {official.isActive && (
                       <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden animate-pulse group-hover:animate-none">
                         <span className="w-0 group-hover:w-1 h-1 rounded-full bg-white group-hover:mr-1 animate-pulse"></span>
