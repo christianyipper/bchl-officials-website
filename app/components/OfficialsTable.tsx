@@ -195,31 +195,30 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2">
                     {official.isActive && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-orange-600 text-white flex items-center">
-                        <span className="w-1 h-1 rounded-full bg-white mr-1 animate-pulse"></span>
-                        Active
+                      <span className="w-1 h-1 animate-pulse rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent">
+                        
                       </span>
                     )}
                     {official.isOriginal57 && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#a66600] text-[#ffcf0e] border border-[#ffcf0e]">
+                      <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#ffcf0e] text-transparent">
                         OG:57
                       </span>
                     )}
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#0067de] text-white">
+                    <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#0067de] text-transparent">
                       BCHL
                     </span>
                     {official.isAhl && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-white">
+                      <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent">
                         AHL
                       </span>
                     )}
                     {official.isEchl && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-white">
+                      <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent">
                         ECHL
                       </span>
                     )}
                     {official.isPwhl && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#550de7] text-white">
+                      <span className="px-2 h-1 rounded-full text-[10px] font-bold uppercase bg-[#550de7] text-transparent">
                         PWHL
                       </span>
                     )}
