@@ -125,9 +125,9 @@ export default function GameHistoryTable({
               <tr
                 key={game.id}
                 onClick={() => window.open(`https://lscluster.hockeytech.com/game_reports/official-game-report.php?client_code=bchl&game_id=${game.hockeytechId}&lang_id=1`, '_blank')}
-                className="group-hover:bg-orange-600 group-hover:text-white cursor-pointer transition-colors duration-300"
+                className="group hover:bg-orange-600 hover:text-white cursor-pointer transition-colors duration-300"
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 group-hover:text-white">
                   {new Date(game.date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
@@ -137,7 +137,7 @@ export default function GameHistoryTable({
                 <td className="px-6 py-4 text-sm text-white">
                   {game.awayTeam}  @  {game.homeTeam}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-400">{game.location}</td>
+                <td className="px-6 py-4 text-sm text-gray-400 group-hover:text-white">{game.location}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${
