@@ -78,9 +78,9 @@ export default async function OfficialPage({
               {official.isActive ? 'Active' : 'Inactive'}
             </span>
             {official.isOriginal57 ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#a65b00] text-amber-400 border border-amber-400 shadow-glow-amber">
-                Original 57
-              </span>
+              <a href="https://bchl.ca/bchl-announces-officiating-staff-for-2023-24-season" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#a65b00] text-amber-400 border border-amber-400 shadow-glow-amber hover:scale-90 duration-300">
+                OG:57
+              </a>
             ) : null}
             <a href="https://bchl.ca/bchl-officiating-team" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00385e] text-[#2bbbfd] hover:scale-90 duration-300">BCHL</a>
             {official.isAhl ? (
