@@ -201,7 +201,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                       </span>
                     )}
                     {official.isOriginal57 && (
-                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#ffd000] text-transparent group-hover:text-[#ffd000] group-hover:bg-[#2a1600] border border-[#ffd000] shadow-glow-amber transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-[#ffd000] text-transparent group-hover:text-[#ffd000] group-hover:bg-black border-2 border-[#ffd000] shadow-glow-amber transition-all duration-300 flex items-center overflow-hidden">
                         OG : 57
                       </span>
                     )}
