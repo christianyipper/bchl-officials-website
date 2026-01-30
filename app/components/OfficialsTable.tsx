@@ -196,18 +196,18 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                   <div className="flex flex-wrap gap-1 mt-2 h-6">
                     {official.isActive && (
                       <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent group-hover:text-white transition-all duration-300 flex items-center">
-                        <span className="w-1 h-1 rounded-full bg-white mr-1 animate-pulse group-hover:block hidden"></span>
+                        <span className="w-1 h-1 rounded-full bg-transparent group-hover:bg-white mr-1 animate-pulse group-hover:block"></span>
                         Active
                       </span>
                     )}
                     {official.isOriginal57 && (
-                      <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#a66600] text-transparent group-hover:text-[#ffcf0e] border border-[#ffcf0e] transition-all duration-300 flex items-center">
+                      <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#ffcf0e] text-transparent group-hover:text-[#ffcf0e] group-hover:bg-[#a66600] border border-[#ffcf0e] transition-all duration-300 flex items-center">
                         OG:57
                       </span>
                     )}
-                    <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#0067de] text-transparent group-hover:text-white transition-all duration-300 flex items-center">
+                    {/* <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#0067de] text-transparent group-hover:text-white transition-all duration-300 flex items-center">
                       BCHL
-                    </span>
+                    </span> */}
                     {official.isAhl && (
                       <span className="px-2 h-1 group-hover:h-6 rounded-full text-[10px] font-bold uppercase bg-[#c70000] text-transparent group-hover:text-white transition-all duration-300 flex items-center">
                         AHL
