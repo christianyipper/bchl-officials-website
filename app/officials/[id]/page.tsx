@@ -82,19 +82,19 @@ export default async function OfficialPage({
                 Original 57
               </span>
             ) : null}
-            <a href="https://bchl.ca/bchl-officiating-team" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00385e] text-[#25abff] hover:scale-90 duration-300">BCHL</a>
+            <a href="https://bchl.ca/bchl-officiating-team" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00385e] text-[#2bbbfd] hover:scale-90 duration-300">BCHL</a>
             {official.isAhl ? (
-              <a href="https://theahl.com/on-ice-officials" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#550000] text-red-500 hover:scale-90 duration-300">
+              <a href="https://theahl.com/on-ice-officials" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#550000] text-[#ff3838] hover:scale-90 duration-300">
                 AHL
               </a>
             ) : null}
             {official.isEchl ? (
-              <a href="https://echl.com/about/officials" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#550000] text-red-500 hover:scale-90 duration-300">
+              <a href="https://echl.com/about/officials" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#550000] text-[#ff3838] hover:scale-90 duration-300">
                 ECHL
               </a>
             ) : null}
             {official.isPwhl ? (
-              <a href="https://www.thepwhl.com/en/news/2025/november/14/pwhl-announces-officiating-leadership-department-and-team-rule-changes-for-2025-26-season" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#310884] text-[#9752ff] hover:scale-90 duration-300">
+              <a href="https://www.thepwhl.com/en/news/2025/november/14/pwhl-announces-officiating-leadership-department-and-team-rule-changes-for-2025-26-season" target="_blank" className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#35098e] text-[#ad65ff] hover:scale-90 duration-300">
                 PWHL
               </a>
             ) : null}
