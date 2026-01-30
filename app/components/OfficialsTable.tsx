@@ -187,7 +187,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
                 className="bg-black group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className="pl-6 py-4 min-w-80 align-top">
+                <td className="pl-6 py-4 w-80 align-top">
                   <div className={`text-lg italic font-black uppercase group-hover:text-white ${
                     sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                   }`}>
