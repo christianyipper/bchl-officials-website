@@ -10,12 +10,13 @@ function SlidingText({ text, isActive }: { text: string; isActive: boolean }) {
       {text.split('').map((char, index) => (
         <span
           key={index}
-          className="inline-block overflow-hidden align-top"
+          className="inline-block overflow-hidden align-top relative"
           style={{ height: '1.2em', lineHeight: '1.2em' }}
         >
           <span
             className="inline-block transition-transform duration-300 ease-out will-change-transform"
             style={{
+              transform: 'translateY(0)',
               transitionDelay: `${index * 20}ms`,
             }}
           >
