@@ -10,18 +10,29 @@ function SlidingText({ text, isActive }: { text: string; isActive: boolean }) {
       {text.split('').map((char, index) => (
         <span
           key={index}
-          className="inline-block overflow-hidden align-top relative"
-          style={{ height: '1.2em', lineHeight: '1.2em' }}
+          className="letter-container inline-block relative"
+          style={{
+            height: '1.2em',
+            lineHeight: '1.2em',
+            width: char === ' ' ? '0.3em' : 'auto'
+          }}
         >
           <span
-            className="inline-block transition-transform duration-300 ease-out will-change-transform"
+            className="absolute top-0 left-0 transition-transform duration-300 ease-out"
             style={{
-              transform: 'translateY(0)',
               transitionDelay: `${index * 20}ms`,
             }}
           >
-            <span className="block" style={{ lineHeight: '1.2em' }}>{char === ' ' ? '\u00A0' : char}</span>
-            <span className="block" style={{ lineHeight: '1.2em' }}>{char === ' ' ? '\u00A0' : char}</span>
+            {char === ' ' ? '\u00A0' : char}
+          </span>
+          <span
+            className="absolute left-0 transition-transform duration-300 ease-out"
+            style={{
+              top: '1.2em',
+              transitionDelay: `${index * 20}ms`,
+            }}
+          >
+            {char === ' ' ? '\u00A0' : char}
           </span>
         </span>
       ))}
@@ -67,13 +78,13 @@ export default function Nav() {
                     : 'text-white group'
                 }`}
               >
-                <span className={`relative flex h-full justify-center items-baseline text-sm font-bold uppercase tracking-wider transition-colors duration-300 ${
+                <p className={`relative flex h-full justify-center items-center text-sm font-bold uppercase tracking-wider transition-colors duration-300 ${
                   isActive(link.href)
                     ? '-top-0.5'
                     : ''
                 }`}>
                   <SlidingText text={link.label} isActive={isActive(link.href)} />
-                </span>
+                </p>
                 <div className="w-full h-full absolute bg-orange-600 -translate-y-full group-hover:translate-y-0 transition-all duration-300 -z-10"></div>
               </Link>
             ))}

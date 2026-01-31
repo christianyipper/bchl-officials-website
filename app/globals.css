@@ -51,7 +51,7 @@ h1 {
   }
 
   /* Sliding letter animation for nav */
-  .nav-link:hover span > span {
+  .nav-link:hover .letter-container > span {
     transform: translateY(-1.2em) !important;
   }
 }
