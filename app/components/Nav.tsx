@@ -10,18 +10,29 @@ function SlidingText({ text, isActive }: { text: string; isActive: boolean }) {
       {text.split('').map((char, index) => (
         <span
           key={index}
-          className="inline-block overflow-hidden"
-          style={{ height: '1em' }}
+          className="letter-container inline-block overflow-hidden align-top relative"
+          style={{ height: '1.2em', lineHeight: '1.2em' }}
         >
           <span
-            className="inline-block transition-transform duration-300 ease-out"
+            className="top-letter block transition-transform duration-300 ease-out will-change-transform"
             style={{
-              transform: 'translateY(0)',
+              lineHeight: '1.2em',
               transitionDelay: `${index * 20}ms`,
             }}
           >
-            <span className="block">{char === ' ' ? '\u00A0' : char}</span>
-            <span className="block">{char === ' ' ? '\u00A0' : char}</span>
+            {char === ' ' ? '\u00A0' : char}
+          </span>
+          <span
+            className="bottom-letter block transition-transform duration-300 ease-out will-change-transform"
+            style={{
+              lineHeight: '1.2em',
+              position: 'absolute',
+              top: '1.2em',
+              left: 0,
+              transitionDelay: `${index * 20}ms`,
+            }}
+          >
+            {char === ' ' ? '\u00A0' : char}
           </span>
         </span>
       ))}
@@ -61,13 +72,13 @@ export default function Nav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`nav-link group relative flex h-full justify-center items-center px-4 text-sm font-bold uppercase tracking-wider transition-colors duration-300 ${
+                className={`nav-link group relative flex h-full justify-center items-center px-6 text-md font-bold uppercase tracking-wider transition-colors duration-300 ${
                   isActive(link.href)
                     ? 'border-t-4 border-orange-600 text-white'
                     : 'text-white group'
                 }`}
               >
-                <p className={`relative flex h-full justify-center items-center text-sm font-bold uppercase tracking-wider transition-colors duration-300 ${
+                <p className={`relative flex h-full justify-center items-center text-md font-bold uppercase tracking-wider transition-colors duration-300 ${
                   isActive(link.href)
                     ? '-top-0.5'
                     : ''
