@@ -67,13 +67,13 @@ export default function Nav() {
                     : 'text-white group'
                 }`}
               >
-                <p className={`relative flex h-full justify-center items-center text-sm font-bold uppercase tracking-wider transition-colors duration-300 ${
+                <span className={`relative flex h-full justify-center items-baseline text-sm font-bold uppercase tracking-wider transition-colors duration-300 ${
                   isActive(link.href)
                     ? '-top-0.5'
                     : ''
                 }`}>
                   <SlidingText text={link.label} isActive={isActive(link.href)} />
-                </p>
+                </span>
                 <div className="w-full h-full absolute bg-orange-600 -translate-y-full group-hover:translate-y-0 transition-all duration-300 -z-10"></div>
               </Link>
             ))}
