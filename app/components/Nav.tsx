@@ -10,29 +10,18 @@ function SlidingText({ text, isActive }: { text: string; isActive: boolean }) {
       {text.split('').map((char, index) => (
         <span
           key={index}
-          className="letter-container inline-block relative"
-          style={{
-            height: '1.2em',
-            lineHeight: '1.2em',
-            width: char === ' ' ? '0.3em' : 'auto'
-          }}
+          className="inline-block overflow-hidden"
+          style={{ height: '1em' }}
         >
           <span
-            className="absolute top-0 left-0 transition-transform duration-300 ease-out"
+            className="inline-block transition-transform duration-300 ease-out"
             style={{
+              transform: 'translateY(0)',
               transitionDelay: `${index * 20}ms`,
             }}
           >
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-          <span
-            className="absolute left-0 transition-transform duration-300 ease-out"
-            style={{
-              top: '1.2em',
-              transitionDelay: `${index * 20}ms`,
-            }}
-          >
-            {char === ' ' ? '\u00A0' : char}
+            <span className="block">{char === ' ' ? '\u00A0' : char}</span>
+            <span className="block">{char === ' ' ? '\u00A0' : char}</span>
           </span>
         </span>
       ))}
