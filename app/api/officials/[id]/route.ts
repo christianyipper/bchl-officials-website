@@ -93,12 +93,61 @@ export async function GET(
     })
     const isActive = currentSeasonGames > 0
 
+    // Calculate ranks by comparing against all officials
+    const allOfficials = await prisma.official.findMany({
+      include: {
+        _count: {
+          select: {
+            games: true
+          }
+        },
+        games: {
+          select: {
+            role: true
+          }
+        }
+      }
+    })
+
+    // Calculate counts for all officials
+    const officialCounts = allOfficials.map(o => ({
+      id: o.id,
+      totalGames: o._count.games,
+      refereeGames: o.games.filter(g => g.role === 'referee').length,
+      linespersonGames: o.games.filter(g => g.role === 'linesperson').length
+    }))
+
+    // Sort and find ranks (only count officials with > 0 games for each category)
+    const totalGamesRanked = officialCounts
+      .filter(o => o.totalGames > 0)
+      .sort((a, b) => b.totalGames - a.totalGames)
+    const refereeGamesRanked = officialCounts
+      .filter(o => o.refereeGames > 0)
+      .sort((a, b) => b.refereeGames - a.refereeGames)
+    const linespersonGamesRanked = officialCounts
+      .filter(o => o.linespersonGames > 0)
+      .sort((a, b) => b.linespersonGames - a.linespersonGames)
+
+    // Find current official's rank (null if 0 games)
+    const totalGamesRank = totalGames > 0
+      ? totalGamesRanked.findIndex(o => o.id === id) + 1
+      : null
+    const refereeGamesRank = refereeGames > 0
+      ? refereeGamesRanked.findIndex(o => o.id === id) + 1
+      : null
+    const linespersonGamesRank = linespersonGames > 0
+      ? linespersonGamesRanked.findIndex(o => o.id === id) + 1
+      : null
+
     const response = {
       id: official.id,
       name: official.name,
       totalGames,
       refereeGames,
       linespersonGames,
+      totalGamesRank,
+      refereeGamesRank,
+      linespersonGamesRank,
       isActive,
       isOriginal57: official.original57 === 1,
       isAhl: official.ahl === 1,

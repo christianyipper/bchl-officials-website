@@ -21,9 +21,10 @@ type SortDirection = 'asc' | 'desc'
 
 interface OfficialsTableProps {
   officials: OfficialSummary[]
+  searchQuery?: string
 }
 
-export default function OfficialsTable({ officials }: OfficialsTableProps) {
+export default function OfficialsTable({ officials, searchQuery = '' }: OfficialsTableProps) {
   const router = useRouter()
   const [sortField, setSortField] = useState<SortField>('totalGames')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
@@ -46,6 +47,14 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
   const sortedOfficials = useMemo(() => {
     return [...officials]
       .filter(official => official.name !== '-' && official.name.trim() !== '' && official.totalGames > 0)
+      .filter(official => {
+        if (!searchQuery.trim()) return true
+        const query = searchQuery.toLowerCase().trim()
+        const nameParts = official.name.toLowerCase().split(' ')
+        const firstName = nameParts[0] || ''
+        const lastName = nameParts.slice(1).join(' ') || ''
+        return firstName.includes(query) || lastName.includes(query)
+      })
       .sort((a, b) => {
         let aValue: string | number
         let bValue: string | number
@@ -67,7 +76,7 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
         if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
         return 0
       })
-  }, [officials, sortField, sortDirection])
+  }, [officials, sortField, sortDirection, searchQuery])
 
   // Calculate pagination
   const totalItems = sortedOfficials.length
@@ -76,10 +85,10 @@ export default function OfficialsTable({ officials }: OfficialsTableProps) {
   const endIndex = startIndex + itemsPerPage
   const paginatedOfficials = sortedOfficials.slice(startIndex, endIndex)
 
-  // Reset to page 1 when sort changes
+  // Reset to page 1 when sort or search changes
   useMemo(() => {
     setCurrentPage(1)
-  }, [sortField, sortDirection])
+  }, [sortField, sortDirection, searchQuery])
 
   const handlePrevious = () => {
     if (currentPage > 1) {

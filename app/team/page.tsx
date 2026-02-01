@@ -1,5 +1,4 @@
-import OfficialsTable from '../components/OfficialsTable'
-import SeasonTabs from '../components/SeasonTabs'
+import OfficialsPageClient from '../components/OfficialsPageClient'
 
 interface OfficialSummary {
   id: string
@@ -63,9 +62,7 @@ export default async function Team({
           <p className="text-white font-bold uppercase">Track bchl officiating stats</p>
         </div>
 
-        <SeasonTabs seasons={seasons} currentSeason={season} />
-
-        <OfficialsTable officials={officials} />
+        <OfficialsPageClient officials={officials} seasons={seasons} currentSeason={season} />
       </div>
     </main>
   )

@@ -23,7 +23,7 @@ export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) 
   }
 
   return (
-    <div className="mb-6">
+    <div className="">
       <div className="flex gap-2 flex-wrap">
         {seasons.map((season) => (
           <button

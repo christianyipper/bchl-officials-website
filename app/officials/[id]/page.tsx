@@ -4,6 +4,17 @@ import type { Metadata } from 'next'
 import GameHistoryTable from '@/app/components/GameHistoryTable'
 import AnimatedCounter from '@/app/components/AnimatedCounter'
 
+function getOrdinal(n: number) {
+  const s = ['th', 'st', 'nd', 'rd']
+  const v = n % 100
+  const suffix = s[(v - 20) % 10] || s[v] || s[0]
+  return (
+    <>
+      {n}<span className="text-[8px] mt-[4px]">{suffix}</span>
+    </>
+  )
+}
+
 interface GameDetails {
   id: string
   hockeytechId: number
@@ -20,6 +31,9 @@ interface OfficialDetails {
   totalGames: number
   refereeGames: number
   linespersonGames: number
+  totalGamesRank: number | null
+  refereeGamesRank: number | null
+  linespersonGamesRank: number | null
   isActive: boolean
   isOriginal57: boolean
   isAhl: boolean
@@ -127,7 +141,14 @@ export default async function OfficialPage({
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-orange-600 rounded-lg p-4">
-              <div className="text-lg uppercase font-black italic text-white">Total Games</div>
+              <div className="flex flex-row justify-between items-center">
+                <div className="text-lg uppercase font-black italic text-white">Total Games</div>
+                {official.totalGamesRank && (
+                <div className="text-xs uppercase font-bold italic text-orange-600 bg-white flex justify-center items-center px-3 h-6 rounded-full">
+                  {getOrdinal(official.totalGamesRank)}
+                </div>
+              )}
+              </div>
               <AnimatedCounter
                 value={official.totalGames}
                 delay={1200}
@@ -136,7 +157,14 @@ export default async function OfficialPage({
               />
             </div>
             <div className="bg-white rounded-lg p-4">
-              <div className="text-lg uppercase font-black italic text-black">As Referee</div>
+              <div className="flex flex-row justify-between items-center">
+                <div className="text-lg uppercase font-black italic text-black">As Referee</div>
+                {official.refereeGamesRank && (
+                <div className="text-xs uppercase font-bold italic text-white bg-black flex justify-center items-center px-3 h-6 rounded-full">
+                  {getOrdinal(official.refereeGamesRank)}
+                </div>
+              )}
+              </div>
               <AnimatedCounter
                 value={official.refereeGames}
                 delay={1200}
@@ -145,7 +173,14 @@ export default async function OfficialPage({
               />
             </div>
             <div className="bg-black rounded-lg p-4 border-4 border-white">
-              <div className="text-lg uppercase font-black italic text-white">As Linesperson</div>
+              <div className="flex flex-row justify-between items-center">
+                <div className="text-lg uppercase font-black italic text-white">As Linesperson</div>
+                {official.linespersonGamesRank && (
+                <div className="text-xs uppercase font-bold italic text-black bg-white flex justify-center items-center px-3 h-6 rounded-full">
+                  {getOrdinal(official.linespersonGamesRank)}
+                </div>
+              )}
+              </div>
               <AnimatedCounter
                 value={official.linespersonGames}
                 delay={1200}
