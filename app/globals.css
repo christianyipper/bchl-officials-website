@@ -29,6 +29,19 @@ h1 {
   font-style: italic;
 }
 
+.button-1 {
+  color: black;
+  background: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  transition: all 300ms;
+
+  &:hover {
+    background: #ea580c;
+  }
+}
+
 @layer utilities {
   .shadow-glow-amber {
     box-shadow: 0 0 15px rgba(255, 208, 0, 0.6), 0 0 30px rgba(255, 208, 0, 0.4);
