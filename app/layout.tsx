@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BCHL Officials",
+  title: "BCHL Officiating",
   description: "Track BCHL officiating stats and performance",
 };
 
