@@ -46,7 +46,7 @@ export default function Nav() {
   const links = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '/team', label: 'Roster' },
+    { href: '/team', label: 'Team' },
     { href: '/combine', label: 'Combine' },
   ]
 

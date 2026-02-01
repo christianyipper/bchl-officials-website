@@ -162,7 +162,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
         <table className="min-w-full divide-y divide-black">
           <thead className="bg-black">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-64">
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                 First Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
@@ -192,9 +192,9 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
   }
 
   return (
-    <div className="bg-bchl-navy shadow overflow-hidden">
+    <div className=" shadow overflow-hidden">
       <table className="min-w-full">
-        <thead className="bg-bchl-navy">
+        <thead className="">
           <tr>
             <th
               className={`pl-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
@@ -253,7 +253,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
             </th>
           </tr>
         </thead>
-        <tbody className="bg-bchl-navy divide-y divide-bchl-navy">
+        <tbody className="divide-y divide-bchl-navy">
           {paginatedOfficials.map((official) => {
             const nameParts = official.name.split(' ')
             const firstName = nameParts[0] || ''
@@ -262,10 +262,10 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
             return (
               <tr
                 key={official.id}
-                className="bg-black group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
+                className="group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className="pl-6 py-3 w-[286px] align-top">
+                <td className="w-[286px] pl-6 py-3 align-top">
                   <div className={`text-lg italic font-black uppercase group-hover:text-white ${
                     sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                   }`}>
@@ -303,7 +303,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
                     )}
                   </div>
                 </td>
-                <td className={`px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`w-[286px] px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'lastName' ? 'text-bchl-light-orange' : 'text-white'
                 }`}>
                   {lastName}

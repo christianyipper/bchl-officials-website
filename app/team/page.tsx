@@ -58,7 +58,7 @@ export default async function Team({
     <main className="min-h-screen bg-black py-16">
       <div className="container mx-auto px-4">
         <div className="mb-8">
-          <h1 className="font-[zuume] text-8xl font-bold italic text-white">Officiating Roster</h1>
+          <h1 className="text-8xl text-white">Officiating Team</h1>
           <p className="text-white font-bold uppercase">Track bchl officiating stats</p>
         </div>
 
