@@ -200,7 +200,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               className={`pl-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'firstName'
                   ? 'bg-orange-600 text-white'
-                  : 'text-white hover:bg-orange-600'
+                  : 'bg-bchl-navy text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('firstName')}
             >
@@ -211,7 +211,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'lastName'
                   ? 'bg-orange-600 text-white'
-                  : 'text-white hover:bg-orange-600'
+                  : 'bg-bchl-navy text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('lastName')}
             >
@@ -222,7 +222,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'totalGames'
                   ? 'bg-orange-600 text-white'
-                  : 'text-white hover:bg-orange-600'
+                  : 'bg-bchl-navy text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('totalGames')}
             >
@@ -233,7 +233,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'refereeGames'
                   ? 'bg-orange-600 text-white'
-                  : 'text-white hover:bg-orange-600'
+                  : 'bg-bchl-navy text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('refereeGames')}
             >
@@ -244,7 +244,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'linespersonGames'
                   ? 'bg-orange-600 text-white'
-                  : 'text-white hover:bg-orange-600'
+                  : 'bg-bchl-navy text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('linespersonGames')}
             >
