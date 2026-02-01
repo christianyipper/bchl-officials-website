@@ -73,7 +73,7 @@ export async function generateMetadata({
   const official = await getOfficial(id)
 
   return {
-    title: `${official.name} - BCHL Officials`,
+    title: `${official.name} - BCHL Officiating`,
     description: `View ${official.name}'s game history and statistics. ${official.totalGames} total games (${official.refereeGames} as referee, ${official.linespersonGames} as linesperson).`,
   }
 }
