@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { revalidatePath } from 'next/cache'
 import { scrapeGameReport } from '@/lib/scraper/scraper'
 import { discoverGameIds } from '@/lib/scraper/game-id-discovery'
 import { scrapeAndSaveGames } from '@/lib/scraper/save-to-db'
@@ -42,7 +41,6 @@ export async function POST(request: NextRequest) {
           )
         }
         const saveResults = await scrapeAndSaveGames(body.gameIds)
-        revalidatePath('/team') // Clear cache for team page
         return NextResponse.json(saveResults)
 
       case 'discover-and-save':
@@ -54,8 +52,6 @@ export async function POST(request: NextRequest) {
         }
         const discovery = await discoverGameIds(startId, endId, concurrency || 5)
         const results = await scrapeAndSaveGames(discovery.found)
-        revalidatePath('/team') // Clear cache for team page
-        revalidatePath('/officials', 'layout') // Clear cache for all official pages
         return NextResponse.json({
           discovery,
           results
