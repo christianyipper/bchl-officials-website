@@ -13,7 +13,9 @@ jobs:
     steps:
       - name: Scrape new games
         run: |
-          response=$(curl -X POST ${{ secrets.APP_URL }}/api/scrape \
+          echo "Calling: ${{ secrets.APP_URL }}/api/scrape"
+
+          response=$(curl -L -X POST ${{ secrets.APP_URL }}/api/scrape \
             -H "Content-Type: application/json" \
             -d '{
               "action": "discover-and-save",
@@ -26,7 +28,7 @@ jobs:
           echo "$response"
 
           # Check if scrape was successful
-          if echo "$response" | grep -q '"success":true'; then
+          if echo "$response" | grep -q '"discovery"'; then
             echo "✅ Scrape completed successfully"
           else
             echo "❌ Scrape failed"
