@@ -57,7 +57,7 @@ async function getOfficial(id: string): Promise<OfficialDetails> {
   const baseUrl = `${protocol}://${host}`
 
   const res = await fetch(`${baseUrl}/api/officials/${id}?page=1&limit=50`, {
-    cache: 'no-store' // Disable cache to ensure fresh data
+    next: { revalidate: 60 } // Cache for 60 seconds
   })
 
   if (!res.ok) {
