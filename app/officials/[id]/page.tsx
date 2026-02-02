@@ -49,16 +49,20 @@ interface OfficialDetails {
 }
 
 async function getOfficial(id: string): Promise<OfficialDetails> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  // Use VERCEL_URL for server-side, NEXT_PUBLIC_BASE_URL for client, or localhost as fallback
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+
   const res = await fetch(`${baseUrl}/api/officials/${id}?page=1&limit=50`, {
-    next: { revalidate: 60 } // Cache for 60 seconds
+    cache: 'no-store' // Disable cache to ensure fresh data
   })
 
   if (!res.ok) {
     if (res.status === 404) {
       notFound()
     }
-    throw new Error('Failed to fetch official')
+    throw new Error(`Failed to fetch official: ${res.status}`)
   }
 
   return res.json()
