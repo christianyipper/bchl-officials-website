@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { headers } from 'next/headers'
 import type { Metadata } from 'next'
 import GameHistoryTable from '@/app/components/GameHistoryTable'
 import AnimatedCounter from '@/app/components/AnimatedCounter'
@@ -49,10 +50,11 @@ interface OfficialDetails {
 }
 
 async function getOfficial(id: string): Promise<OfficialDetails> {
-  // Use VERCEL_URL for server-side, NEXT_PUBLIC_BASE_URL for client, or localhost as fallback
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  // Get the host from request headers for proper URL construction
+  const headersList = await headers()
+  const host = headersList.get('host') || 'localhost:3000'
+  const protocol = host.includes('localhost') ? 'http' : 'https'
+  const baseUrl = `${protocol}://${host}`
 
   const res = await fetch(`${baseUrl}/api/officials/${id}?page=1&limit=50`, {
     cache: 'no-store' // Disable cache to ensure fresh data
