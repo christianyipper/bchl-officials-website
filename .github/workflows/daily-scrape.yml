@@ -19,7 +19,7 @@ jobs:
               "action": "discover-and-save",
               "startId": 13870,
               "endId": 20000,
-              "batchSize": 10
+              "concurrency": 5
             }')
 
           echo "Scrape response:"
