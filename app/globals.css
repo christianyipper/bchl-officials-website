@@ -74,4 +74,13 @@ h1 {
   .nav-link:hover .letter-container .bottom-letter {
     transform: translateY(-1.2em) !important;
   }
+
+  /* Rotating word animation on home page */
+  .rotating-word.animate .letter-container .top-letter {
+    transform: translateY(-1.2em) !important;
+  }
+
+  .rotating-word.animate .letter-container .bottom-letter {
+    transform: translateY(-1.2em) !important;
+  }
 }
