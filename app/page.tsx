@@ -1,6 +1,59 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion, useMotionValue, useSpring } from 'framer-motion'
+
+// Parallax hero component with mouse tracking
+function ParallaxHero() {
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+
+  // Smooth spring animation for background (slower movement)
+  const bgX = useSpring(mouseX, { stiffness: 30, damping: 30 })
+  const bgY = useSpring(mouseY, { stiffness: 30, damping: 30 })
+
+  // Smooth spring animation for foreground (follows mouse with smoothing)
+  const fgX = useSpring(mouseX, { stiffness: 50, damping: 25 })
+  const fgY = useSpring(mouseY, { stiffness: 50, damping: 25 })
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2
+      const y = (e.clientY / window.innerHeight - 0.5) * 2
+      mouseX.set(x * 25)
+      mouseY.set(y * 25)
+    }
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [mouseX, mouseY])
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {/* Background layer - moves slower for parallax depth */}
+      <motion.div
+        className="absolute inset-[-30px] bg-cover bg-center"
+        style={{
+          backgroundImage: 'url(/assets/bchl-hero-bg.jpg)',
+          x: bgX,
+          y: bgY,
+          scale: 1.1,
+        }}
+      />
+      {/* Foreground layer - follows mouse */}
+      <motion.div
+        className="absolute inset-[-30px] bg-no-repeat"
+        style={{
+          backgroundImage: 'url(/assets/bchl-hero-main.png)',
+          backgroundPosition: 'center top',
+          backgroundSize: '100% auto',
+          x: fgX,
+          y: fgY,
+        }}
+      />
+    </div>
+  )
+}
 
 // Component to split text into animating letters
 function SlidingText({ text }: { text: string }) {
@@ -66,27 +119,27 @@ function RotatingText() {
 export default function Home() {
   return (
     <main className="flex flex-col justify-end relative min-h-screen">
-      <div className="absolute w-full h-screen overflow-hidden top-0">
-        <img src="./assets/bchlofficiating-bg.jpg" alt="" className="w-full top-0"/>
-      </div>
-      <div className="container mx-auto px-4 py-[10vh] h-full flex flex-col justify-end z-10">
-        <div className="flex flex-col text-left mb-8">
-          <h1 className="font-[zuume] text-8xl font-bold italic text-white">
-            Combine 2026
-          </h1>
-          <div className="flex flex-row justify-between">
-            <p className="text-white font-bold uppercase tracking-wider">
-              Showcase your <RotatingText />
-            </p>
+      <ParallaxHero />
+      <div className="container mx-auto py-[10vh] h-full z-10">
+        <div className="flex flex-col w-min p-4">
+          <div className="flex flex-col text-left mb-8 w-max">
+            <h1 className="font-[zuume] text-8xl font-bold italic text-white">
+              Combine 2026
+            </h1>
+            <div className="flex flex-row justify-between">
+              <p className="text-white font-bold uppercase tracking-wider">
+                Showcase your <RotatingText />
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-row gap-4">
-          <a href="/team" className="px-4 py-2 font-black flex justify-center items-center uppercase text-sm transition-colors duration-300
-          bg-white text-black hover:bg-orange-600 hover:text-white
-          ">Learn More</a>
-          <a href="/team" className="px-4 py-2 font-black flex justify-center items-center uppercase text-sm transition-colors duration-300
-          bg-transparent text-white border-2 border-white hover:bg-orange-600 hover:border-orange-600
-          ">Our Team</a>
+          <div className="flex flex-row gap-4">
+            <a href="/team" className="px-4 py-2 font-black flex justify-center items-center uppercase text-sm transition-colors duration-300
+            bg-white text-black hover:bg-orange-600 hover:text-white
+            ">Learn More</a>
+            <a href="/team" className="px-4 py-2 font-black flex justify-center items-center uppercase text-sm transition-colors duration-300
+            bg-transparent text-white border-2 border-white hover:bg-orange-600 hover:border-orange-600
+            ">Our Team</a>
+          </div>
         </div>
       </div>
     </main>
