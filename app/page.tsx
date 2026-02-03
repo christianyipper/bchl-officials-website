@@ -66,8 +66,11 @@ function RotatingText() {
 export default function Home() {
   return (
     <main className="flex flex-col justify-end relative min-h-screen">
-      <div className="container mx-auto px-4 py-16 h-full flex flex-col justify-end">
-        <div className="text-left mb-8">
+      <div className="absolute w-full h-screen overflow-hidden top-0">
+        <img src="./assets/bchlofficiating-bg.jpg" alt="" className="w-full top-0"/>
+      </div>
+      <div className="container mx-auto px-4 py-[10vh] h-full flex flex-col justify-end z-10">
+        <div className="flex flex-col text-left mb-8">
           <h1 className="font-[zuume] text-8xl font-bold italic text-white">
             Combine 2026
           </h1>
