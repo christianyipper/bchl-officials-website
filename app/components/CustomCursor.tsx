@@ -55,7 +55,7 @@ export default function CustomCursor() {
         style={{
           left: springX,
           top: springY,
-          opacity: isHovering ? 0 : 0.25,
+          opacity: isHovering ? 0 : 1,
         }}
       />
 

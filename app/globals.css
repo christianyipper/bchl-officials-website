@@ -33,7 +33,8 @@ body {
   z-index: 9997;
   width: 32px;
   height: 32px;
-  background: #ea580c;
+  background: rgba(234, 88, 12, 0.25);
+  border: 0.5px solid rgb(255, 110, 26, 0.6);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: opacity 0.2s ease;
