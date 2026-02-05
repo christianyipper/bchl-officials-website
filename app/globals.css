@@ -20,6 +20,79 @@ body {
   background: black;
   color: white;
   font-family: "pennypacker-wide", Helvetica, sans-serif;
+  cursor: none;
+}
+
+* {
+  cursor: none !important;
+}
+
+.custom-cursor-follower {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9997;
+  width: 32px;
+  height: 32px;
+  background: #ea580c;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s ease;
+}
+
+.custom-cursor-crosshair {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease;
+}
+
+.custom-cursor-static {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: cursor-static-grow 0.2s ease-out forwards;
+}
+
+@keyframes cursor-static-grow {
+  0% {
+    width: 0px;
+    height: 0px;
+  }
+  100% {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.custom-cursor-pulse {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: cursor-pulse 1s ease-out infinite;
+}
+
+@keyframes cursor-pulse {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 1;
+  }
+  100% {
+    width: 32px;
+    height: 32px;
+    opacity: 0;
+  }
 }
 
 h1 {
