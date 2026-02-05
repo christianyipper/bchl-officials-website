@@ -37,7 +37,7 @@ export default function OfficialsPageClient({ officials, seasons, currentSeason 
           placeholder="Search by name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="px-4 py-2 bg-bchl-navy border-2 border-gray-500 text-white placeholder-gray-500 focus:outline-none hover:border-orange-600 focus:border-orange-600 transition-colors duration-300 font-medium text-sm w-64"
+          className="cursor-pointer px-4 py-2 bg-bchl-navy border-2 border-gray-500 text-white placeholder-gray-500 focus:outline-none hover:border-orange-600 focus:border-orange-600 transition-colors duration-300 font-medium text-sm w-64"
         />
       </div>
 
