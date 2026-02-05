@@ -24,14 +24,32 @@ export default function CustomCursor() {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      if (target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('a') || target.closest('button')) {
+      if (
+        target.tagName === 'A' ||
+        target.tagName === 'BUTTON' ||
+        target.closest('a') ||
+        target.closest('button') ||
+        target.classList.contains('cursor-pointer') ||
+        target.closest('.cursor-pointer') ||
+        (target.tagName === 'TH' && target.classList.contains('cursor-pointer')) ||
+        (target.tagName === 'TR' && target.classList.contains('cursor-pointer'))
+      ) {
         setIsHovering(true)
       }
     }
 
     const handleMouseOut = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      if (target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('a') || target.closest('button')) {
+      if (
+        target.tagName === 'A' ||
+        target.tagName === 'BUTTON' ||
+        target.closest('a') ||
+        target.closest('button') ||
+        target.classList.contains('cursor-pointer') ||
+        target.closest('.cursor-pointer') ||
+        (target.tagName === 'TH' && target.classList.contains('cursor-pointer')) ||
+        (target.tagName === 'TR' && target.classList.contains('cursor-pointer'))
+      ) {
         setIsHovering(false)
       }
     }
