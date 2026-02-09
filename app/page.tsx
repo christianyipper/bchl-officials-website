@@ -28,10 +28,28 @@ function ParallaxHero() {
   // Force video play for Safari
   useEffect(() => {
     const video = videoRef.current
-    if (video) {
+    if (!video) return
+
+    const tryPlay = () => {
       video.play().catch(() => {
         // Autoplay was prevented, will need user interaction
       })
+    }
+
+    // Try playing immediately
+    tryPlay()
+
+    // Also try when video is ready
+    video.addEventListener('loadeddata', tryPlay)
+    video.addEventListener('canplay', tryPlay)
+
+    // Retry after a short delay for Safari initial load
+    const timeout = setTimeout(tryPlay, 500)
+
+    return () => {
+      video.removeEventListener('loadeddata', tryPlay)
+      video.removeEventListener('canplay', tryPlay)
+      clearTimeout(timeout)
     }
   }, [])
 

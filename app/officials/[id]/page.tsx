@@ -139,8 +139,8 @@ export default async function OfficialPage({
             ) : null}
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-orange-600 rounded-lg p-4">
-              <div className="flex flex-col-reverse md:flex-row md:justify-between items-start md:items-center pb-2 md:pb-0">
+            <div className="bg-orange-600 rounded-lg p-4 flex flex-col h-full">
+              <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-8 md:gap-0">
                 <div className="text-lg uppercase font-black italic text-white">Total Games</div>
                 {official.totalGamesRank && (
                 <div className="text-xs uppercase font-bold italic text-orange-600 bg-white flex justify-center items-center px-3 h-6 rounded-full mt-1 md:mt-0">
@@ -152,11 +152,11 @@ export default async function OfficialPage({
                 value={official.totalGames}
                 delay={1200}
                 duration={2500}
-                className="text-4xl font-black italic text-white"
+                className="text-4xl font-black italic text-white mt-auto"
               />
             </div>
-            <div className="bg-white rounded-lg p-4">
-              <div className="flex flex-col-reverse md:flex-row md:justify-between items-start md:items-center pb-2 md:pb-0">
+            <div className="bg-white rounded-lg p-4 flex flex-col h-full">
+              <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-8 md:gap-0">
                 <div className="text-lg uppercase font-black italic text-black">
                   <span className="md:hidden">As<br />Ref</span>
                   <span className="hidden md:inline">As Referee</span>
@@ -171,11 +171,11 @@ export default async function OfficialPage({
                 value={official.refereeGames}
                 delay={1200}
                 duration={2500}
-                className="text-4xl font-black italic text-black"
+                className="text-4xl font-black italic text-black mt-auto"
               />
             </div>
-            <div className="bg-black rounded-lg p-4 border-4 border-white">
-              <div className="flex flex-col-reverse md:flex-row md:justify-between items-start md:items-center pb-2 md:pb-0">
+            <div className="bg-black rounded-lg p-4 flex flex-col h-full border-4 border-white">
+              <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-8 md:gap-0">
                 <div className="text-lg uppercase font-black italic text-white">
                   <span className="md:hidden">As<br />Lines</span>
                   <span className="hidden md:inline">As Linesperson</span>
@@ -190,7 +190,7 @@ export default async function OfficialPage({
                 value={official.linespersonGames}
                 delay={1200}
                 duration={2500}
-                className="text-4xl font-black italic text-white"
+                className="text-4xl font-black italic text-white mt-auto"
               />
             </div>
           </div>
