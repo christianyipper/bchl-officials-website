@@ -11,7 +11,7 @@ function getOrdinal(n: number) {
   const suffix = s[(v - 20) % 10] || s[v] || s[0]
   return (
     <>
-      {n}<span className="text-[8px] mt-[4px]">{suffix}</span>
+      {n}<span className="text-[8px] mt-[2px]">{suffix}</span>
     </>
   )
 }
