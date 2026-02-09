@@ -147,10 +147,10 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
-      return <span className="ml-1 text-gray-400">↕</span>
+      return <span className="hidden md:inline ml-1 text-gray-400">↕</span>
     }
     return (
-      <span className="ml-1">
+      <span className="hidden md:inline ml-1">
         {sortDirection === 'asc' ? '↑' : '↓'}
       </span>
     )
@@ -204,7 +204,8 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               }`}
               onClick={() => handleSort('firstName')}
             >
-              First Name
+              <span className="md:hidden">First<br />Name</span>
+              <span className="hidden md:inline">First Name</span>
               <SortIcon field="firstName" />
             </th>
             <th
@@ -215,7 +216,8 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               }`}
               onClick={() => handleSort('lastName')}
             >
-              Last Name
+              <span className="md:hidden">Last<br />Name</span>
+              <span className="hidden md:inline">Last Name</span>
               <SortIcon field="lastName" />
             </th>
             <th
@@ -226,7 +228,8 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               }`}
               onClick={() => handleSort('totalGames')}
             >
-              Total Games
+              <span className="md:hidden">Total<br />Games</span>
+              <span className="hidden md:inline">Total Games</span>
               <SortIcon field="totalGames" />
             </th>
             <th
@@ -237,7 +240,8 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               }`}
               onClick={() => handleSort('refereeGames')}
             >
-              As Referee
+              <span className="md:hidden">As<br />Ref</span>
+              <span className="hidden md:inline">As Referee</span>
               <SortIcon field="refereeGames" />
             </th>
             <th
@@ -248,7 +252,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               }`}
               onClick={() => handleSort('linespersonGames')}
             >
-              <span className="md:hidden">As Lines</span>
+              <span className="md:hidden">As<br />Lines</span>
               <span className="hidden md:inline">As Linesperson</span>
               <SortIcon field="linespersonGames" />
             </th>
@@ -266,7 +270,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
                 className="group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className="md:w-[286px] pl-3 md:pl-6 py-3 align-top">
+                <td className="md:w-[286px] pl-3 md:pl-6 py-1.5 md:py-3 align-top">
                   <div className={`text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                     sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                   }`}>
@@ -304,22 +308,22 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
                     )}
                   </div>
                 </td>
-                <td className={`md:w-[286px] px-3 md:px-6 py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`md:w-[286px] px-3 md:px-6 py-2 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'lastName' ? 'text-bchl-light-orange' : 'text-white'
                 }`}>
                   {lastName}
                 </td>
-                <td className={`px-3 md:px-6 py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-3 md:px-6 py-2 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'totalGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.totalGames}
                 </td>
-                <td className={`px-3 md:px-6 py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-3 md:px-6 py-2 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'refereeGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.refereeGames}
                 </td>
-                <td className={`px-3 md:px-6 py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-3 md:px-6 py-2 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'linespersonGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.linespersonGames}

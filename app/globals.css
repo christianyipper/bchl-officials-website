@@ -28,6 +28,19 @@ body {
   html {
     font-size: 12px;
   }
+
+  /* Restore default cursor on mobile */
+  body, * {
+    cursor: default !important;
+  }
+
+  /* Hide custom cursor elements on mobile */
+  .custom-cursor-follower,
+  .custom-cursor-crosshair,
+  .custom-cursor-static,
+  .custom-cursor-pulse {
+    display: none !important;
+  }
 }
 
 * {
