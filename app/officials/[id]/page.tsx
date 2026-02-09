@@ -95,13 +95,6 @@ export default async function OfficialPage({
   return (
     <main className="min-h-screen bg-black py-16">
       <div className="container mx-auto px-4">
-        {/* <Link
-          href="/"
-          className="inline-flex items-center text-blue-600 hover:underline mb-6"
-        >
-          ← Back to Officials
-        </Link> */}
-
         <div className="bg-black rounded-lg shadow mb-16">
           <h1 className="text-8xl font-[zuume] font-bold italic uppercase text-white">{official.name}</h1>
           <div className="mb-6 flex flex-row align-middle items-center gap-2">

@@ -23,6 +23,13 @@ body {
   cursor: none;
 }
 
+/* Default 12px text size on mobile */
+@media (max-width: 767px) {
+  html {
+    font-size: 12px;
+  }
+}
+
 * {
   cursor: none !important;
 }

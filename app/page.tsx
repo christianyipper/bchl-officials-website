@@ -30,16 +30,25 @@ function ParallaxHero() {
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Background layer - moves slower for parallax depth */}
+      {/* Background video layer - moves opposite for parallax depth */}
       <motion.div
-        className="absolute inset-[-30px] bg-cover bg-center"
+        className="absolute inset-[-30px]"
         style={{
-          backgroundImage: 'url(/assets/bchl-hero-bg.jpg)',
           x: bgX,
           y: bgY,
           scale: 1.1,
         }}
-      />
+      >
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+        >
+          <source src="/assets/bchl-hero-bg.mp4" type="video/mp4" />
+        </video>
+      </motion.div>
       {/* Foreground layer - follows mouse */}
       <motion.div
         className="absolute inset-[-30px] bg-no-repeat"

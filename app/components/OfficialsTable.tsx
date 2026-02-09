@@ -197,7 +197,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
         <thead className="">
           <tr>
             <th
-              className={`pl-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`pl-3 md:pl-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'firstName'
                   ? 'bg-orange-600 text-white'
                   : 'bg-bchl-navy text-white hover:bg-orange-600'
@@ -208,7 +208,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               <SortIcon field="firstName" />
             </th>
             <th
-              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-3 md:px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'lastName'
                   ? 'bg-orange-600 text-white'
                   : 'bg-bchl-navy text-white hover:bg-orange-600'
@@ -219,7 +219,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               <SortIcon field="lastName" />
             </th>
             <th
-              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-3 md:px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'totalGames'
                   ? 'bg-orange-600 text-white'
                   : 'bg-bchl-navy text-white hover:bg-orange-600'
@@ -230,7 +230,7 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               <SortIcon field="totalGames" />
             </th>
             <th
-              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-3 md:px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'refereeGames'
                   ? 'bg-orange-600 text-white'
                   : 'bg-bchl-navy text-white hover:bg-orange-600'
@@ -241,14 +241,15 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
               <SortIcon field="refereeGames" />
             </th>
             <th
-              className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
+              className={`px-3 md:px-6 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors duration-300 ${
                 sortField === 'linespersonGames'
                   ? 'bg-orange-600 text-white'
                   : 'bg-bchl-navy text-white hover:bg-orange-600'
               }`}
               onClick={() => handleSort('linespersonGames')}
             >
-              As Linesperson
+              <span className="md:hidden">As Lines</span>
+              <span className="hidden md:inline">As Linesperson</span>
               <SortIcon field="linespersonGames" />
             </th>
           </tr>
@@ -265,60 +266,60 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
                 className="group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className="w-[286px] pl-6 py-3 align-top">
-                  <div className={`text-lg italic font-black uppercase group-hover:text-white ${
+                <td className="md:w-[286px] pl-3 md:pl-6 py-3 align-top">
+                  <div className={`text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                     sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                   }`}>
                     {firstName}
                   </div>
                   <div className="flex flex-nowrap items-start gap-1 h-5">
                     {official.isActive && (
-                      <span className="px-0 group-hover:pr-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent group-hover:text-white transition-all duration-300 flex items-center overflow-hidden animate-pulse group-hover:animate-none">
-                        <span className="w-0 group-hover:w-1.5 h-1.5 rounded-full bg-white group-hover:mr-1 animate-pulse"></span>
+                      <span className="px-0 md:group-hover:pr-1 h-2 w-2 md:group-hover:h-5 md:group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent md:group-hover:text-white transition-all duration-300 flex items-center overflow-hidden animate-pulse md:group-hover:animate-none">
+                        <span className="w-0 md:group-hover:w-1.5 h-1.5 rounded-full bg-white md:group-hover:mr-1 animate-pulse"></span>
                         Active
                       </span>
                     )}
                     {official.isOriginal57 && (
-                      <span className="px-0 group-hover:px-2 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-transparent text-transparent group-hover:text-white group-hover:bg-transparent border-2 border-white transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 md:group-hover:px-2 h-2 w-2 md:group-hover:h-5 md:group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-transparent text-transparent md:group-hover:text-white md:group-hover:bg-transparent border-2 border-white transition-all duration-300 flex items-center overflow-hidden">
                         OG
                       </span>
                     )}
-                    <span className="px-0 group-hover:px-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent group-hover:text-white group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
+                    <span className="px-0 md:group-hover:px-1 h-2 w-2 md:group-hover:h-5 md:group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent md:group-hover:text-white md:group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
                       BCHL
                     </span>
                     {official.isAhl && (
-                      <span className="px-0 group-hover:px-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent group-hover:text-white group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 md:group-hover:px-1 h-2 w-2 md:group-hover:h-5 md:group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent md:group-hover:text-white md:group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
                         AHL
                       </span>
                     )}
                     {official.isPwhl && (
-                      <span className="px-0 group-hover:px-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent group-hover:text-white group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 md:group-hover:px-1 h-2 w-2 md:group-hover:h-5 md:group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent md:group-hover:text-white md:group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
                         PWHL
                       </span>
                     )}
                     {official.isEchl && (
-                      <span className="px-0 group-hover:px-1 h-2 w-2 group-hover:h-5 group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent group-hover:text-white group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
+                      <span className="px-0 md:group-hover:px-1 h-2 w-2 md:group-hover:h-5 md:group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-white text-transparent md:group-hover:text-white md:group-hover:bg-transparent transition-all duration-300 flex items-center overflow-hidden">
                         ECHL
                       </span>
                     )}
                   </div>
                 </td>
-                <td className={`w-[286px] px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`md:w-[286px] px-3 md:px-6 py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'lastName' ? 'text-bchl-light-orange' : 'text-white'
                 }`}>
                   {lastName}
                 </td>
-                <td className={`px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-3 md:px-6 py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'totalGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.totalGames}
                 </td>
-                <td className={`px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-3 md:px-6 py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'refereeGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.refereeGames}
                 </td>
-                <td className={`px-6 py-4 align-top whitespace-nowrap text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-3 md:px-6 py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'linespersonGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.linespersonGames}
