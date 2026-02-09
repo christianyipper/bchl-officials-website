@@ -67,7 +67,7 @@ function ParallaxHero() {
           muted
           playsInline
           webkit-playsinline="true"
-          className="w-full h-full object-cover object-[80%_center] md:object-center"
+          className="w-full h-full object-cover object-[90%_center] md:object-center"
         >
           <source src="/assets/bchl-hero-bg.mp4" type="video/mp4" />
         </video>
@@ -77,7 +77,7 @@ function ParallaxHero() {
         className="absolute inset-0 md:inset-[-30px] bg-no-repeat bg-cover md:bg-[length:100%_auto]"
         style={{
           backgroundImage: 'url(/assets/bchl-hero-main.png)',
-          backgroundPosition: isMobile ? '80% top' : 'center top',
+          backgroundPosition: isMobile ? '90% top' : 'center top',
           x: isMobile ? 0 : fgX,
           y: isMobile ? 0 : fgY,
         }}
