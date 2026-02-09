@@ -5,6 +5,7 @@ import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 // Parallax hero component with mouse tracking
 function ParallaxHero() {
+  const [isMobile, setIsMobile] = useState(false)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
@@ -17,6 +18,15 @@ function ParallaxHero() {
   const fgY = useSpring(mouseY, { stiffness: 50, damping: 25 })
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  useEffect(() => {
+    if (isMobile) return
+
     const handleMouseMove = (e: MouseEvent) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 2
       const y = (e.clientY / window.innerHeight - 0.5) * 2
@@ -26,17 +36,17 @@ function ParallaxHero() {
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true })
     return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [mouseX, mouseY])
+  }, [mouseX, mouseY, isMobile])
 
   return (
     <div className="absolute inset-0 overflow-hidden">
       {/* Background video layer - moves opposite for parallax depth */}
       <motion.div
-        className="absolute inset-[-30px]"
+        className="absolute inset-0 md:inset-[-30px]"
         style={{
-          x: bgX,
-          y: bgY,
-          scale: 1.1,
+          x: isMobile ? 0 : bgX,
+          y: isMobile ? 0 : bgY,
+          scale: isMobile ? 1 : 1.1,
         }}
       >
         <video
@@ -44,20 +54,19 @@ function ParallaxHero() {
           loop
           muted
           playsInline
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-right md:object-center"
         >
           <source src="/assets/bchl-hero-bg.mp4" type="video/mp4" />
         </video>
       </motion.div>
       {/* Foreground layer - follows mouse */}
       <motion.div
-        className="absolute inset-[-30px] bg-no-repeat"
+        className="absolute inset-0 md:inset-[-30px] bg-no-repeat bg-cover md:bg-[length:100%_auto]"
         style={{
           backgroundImage: 'url(/assets/bchl-hero-main.png)',
-          backgroundPosition: 'center top',
-          backgroundSize: '100% auto',
-          x: fgX,
-          y: fgY,
+          backgroundPosition: isMobile ? 'right top' : 'center top',
+          x: isMobile ? 0 : fgX,
+          y: isMobile ? 0 : fgY,
         }}
       />
     </div>
