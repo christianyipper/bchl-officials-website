@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
 
 // Parallax hero component with mouse tracking
 function ParallaxHero() {
@@ -104,63 +104,31 @@ function ParallaxHero() {
   )
 }
 
-// Component to split text into animating letters
-function SlidingText({ text }: { text: string }) {
-  return (
-    <span className="inline-flex">
-      {text.split('').map((char, index) => (
-        <span
-          key={`${text}-${index}`}
-          className="letter-container inline-block overflow-hidden align-top relative"
-          style={{ height: '1.2em', lineHeight: '1.2em', width: char === ' ' ? '0.3em' : 'auto' }}
-        >
-          <span
-            className="top-letter block transition-transform duration-300 ease-out will-change-transform"
-            style={{
-              lineHeight: '1.2em',
-              transitionDelay: `${index * 20}ms`,
-            }}
-          >
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-          <span
-            className="bottom-letter block transition-transform duration-300 ease-out will-change-transform"
-            style={{
-              lineHeight: '1.2em',
-              position: 'absolute',
-              top: '1.2em',
-              left: 0,
-              transitionDelay: `${index * 20}ms`,
-            }}
-          >
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-        </span>
-      ))}
-    </span>
-  )
-}
-
 function RotatingText() {
   const words = ['skills.', 'officiating.', 'game.']
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isAnimating, setIsAnimating] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsAnimating(true)
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % words.length)
-        setIsAnimating(false)
-      }, 300)
+      setCurrentIndex((prev) => (prev + 1) % words.length)
     }, 3000)
 
     return () => clearInterval(interval)
   }, [])
 
   return (
-    <span className={`text-bchl-light-orange inline-block rotating-word ${isAnimating ? 'animate' : ''}`}>
-      <SlidingText text={words[currentIndex]} />
+    <span className="text-bchl-light-orange inline-block relative">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={words[currentIndex]}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+        >
+          {words[currentIndex]}
+        </motion.span>
+      </AnimatePresence>
     </span>
   )
 }
