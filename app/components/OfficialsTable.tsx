@@ -270,13 +270,13 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
                 className="group hover:bg-orange-600 cursor-pointer transition-colors duration-300"
                 onClick={() => router.push(`/officials/${official.id}`)}
               >
-                <td className="md:w-[286px] pl-3 md:pl-6 py-1.5 md:py-3 align-top">
+                <td className="md:w-[286px] pl-3 md:pl-6 pt-3 pb-3 md:pt-4 md:pb-2 align-top">
                   <div className={`text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                     sortField === 'firstName' ? 'text-bchl-light-orange' : 'text-white'
                   }`}>
                     {firstName}
                   </div>
-                  <div className="flex flex-nowrap items-start gap-1 h-5">
+                  <div className="hidden md:flex flex-nowrap items-start gap-1 h-5">
                     {official.isActive && (
                       <span className="px-0 md:group-hover:pr-1 h-2 w-2 md:group-hover:h-5 md:group-hover:w-auto rounded-full text-[10px] font-bold uppercase bg-orange-600 text-transparent md:group-hover:text-white transition-all duration-300 flex items-center overflow-hidden animate-pulse md:group-hover:animate-none">
                         <span className="w-0 md:group-hover:w-1.5 h-1.5 rounded-full bg-white md:group-hover:mr-1 animate-pulse"></span>
@@ -308,22 +308,22 @@ export default function OfficialsTable({ officials, searchQuery = '' }: Official
                     )}
                   </div>
                 </td>
-                <td className={`md:w-[286px] px-3 md:px-6 py-2 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`md:w-[286px] px-3 md:px-6 py-3 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'lastName' ? 'text-bchl-light-orange' : 'text-white'
                 }`}>
                   {lastName}
                 </td>
-                <td className={`px-3 md:px-6 py-2 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-3 md:px-6 py-3 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'totalGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.totalGames}
                 </td>
-                <td className={`px-3 md:px-6 py-2 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-3 md:px-6 py-3 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'refereeGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.refereeGames}
                 </td>
-                <td className={`px-3 md:px-6 py-2 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
+                <td className={`px-3 md:px-6 py-3 md:py-4 align-top whitespace-nowrap text-[10px] md:text-lg italic font-black uppercase group-hover:text-white ${
                   sortField === 'linespersonGames' ? 'text-bchl-light-orange' : 'text-gray-400'
                 }`}>
                   {official.linespersonGames}
