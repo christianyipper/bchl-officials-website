@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 // Parallax hero component with mouse tracking
 function ParallaxHero() {
   const [isMobile, setIsMobile] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
@@ -22,6 +23,16 @@ function ParallaxHero() {
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Force video play for Safari
+  useEffect(() => {
+    const video = videoRef.current
+    if (video) {
+      video.play().catch(() => {
+        // Autoplay was prevented, will need user interaction
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -50,11 +61,13 @@ function ParallaxHero() {
         }}
       >
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-cover object-right md:object-center"
+          webkit-playsinline="true"
+          className="w-full h-full object-cover object-[80%_center] md:object-center"
         >
           <source src="/assets/bchl-hero-bg.mp4" type="video/mp4" />
         </video>
@@ -64,7 +77,7 @@ function ParallaxHero() {
         className="absolute inset-0 md:inset-[-30px] bg-no-repeat bg-cover md:bg-[length:100%_auto]"
         style={{
           backgroundImage: 'url(/assets/bchl-hero-main.png)',
-          backgroundPosition: isMobile ? 'right top' : 'center top',
+          backgroundPosition: isMobile ? '80% top' : 'center top',
           x: isMobile ? 0 : fgX,
           y: isMobile ? 0 : fgY,
         }}
