@@ -140,9 +140,14 @@ export default function Home() {
       <div className="container mx-auto py-[10vh] h-full z-10">
         <div className="flex flex-col w-min p-4">
           <div className="flex flex-col text-left mb-8 w-max">
-            <h1 className="font-[zuume] text-8xl font-bold italic text-white">
-              Combine 2026
-            </h1>
+            <div className="relative flex">
+              <h1 className="font-[zuume] text-8xl font-bold italic text-white z-10">
+                Combine 2026
+              </h1>
+              <p className="font-[zuume] text-8xl font-bold italic text-black absolute blur-lg">
+                Combine 2026
+              </p>
+            </div>
             <div className="flex flex-row justify-between">
               <p className="text-white font-bold uppercase tracking-wider">
                 Showcase your <RotatingText />

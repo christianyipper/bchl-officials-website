@@ -61,8 +61,8 @@ export default function Nav() {
     <nav className="bg-black/20 backdrop-blur-lg z-50 fixed w-full">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-12">
-          <Link href="/" className="flex items-center w-40">
-            <span className="font-[zuume] text-3xl font-bold italic text-white">
+          <Link href="/" className="flex items-center w-44">
+            <span className="font-[zuume] text-4xl font-bold italic text-white">
               BCHL Officiating
             </span>
           </Link>
@@ -89,7 +89,7 @@ export default function Nav() {
               </Link>
             ))}
           </div>
-          <div className="flex items-center w-40">
+          <div className="flex items-center w-44">
 
           </div>
         </div>

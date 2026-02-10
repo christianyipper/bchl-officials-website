@@ -55,11 +55,11 @@ export default async function Team({
   const seasons = await getSeasons()
 
   return (
-    <main className="min-h-screen bg-black py-16">
-      <div className="container mx-auto px-4">
+    <main className="min-h-screen bg-black">
+      <div className="container mx-auto px-4 py-20">
         <div className="mb-8">
           <h1 className="text-8xl text-white">Officiating Team</h1>
-          <p className="text-white font-bold uppercase">Track bchl officiating stats</p>
+          <p className="text-white font-bold uppercase">On-ice officiating stats</p>
         </div>
 
         <OfficialsPageClient officials={officials} seasons={seasons} currentSeason={season} />
