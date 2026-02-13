@@ -12,6 +12,35 @@ interface GameDetails {
   role: string
 }
 
+const teamCityMap: Record<string, string> = {
+  'Alberni Valley Bulldogs': 'Alberni Valley',
+  'Brooks Bandits': 'Brooks',
+  'Chilliwack Chiefs': 'Chilliwack',
+  'Coquitlam Express': 'Coquitlam',
+  'Cowichan Valley Capitals': 'Cowichan Valley',
+  'Cranbrook Bucks': 'Cranbrook',
+  'Langley Rivermen': 'Langley',
+  'Merritt Centennials': 'Merritt',
+  'Nanaimo Clippers': 'Nanaimo',
+  'Okotoks Oilers': 'Okotoks',
+  'Penticton Vees': 'Penticton',
+  'Powell River Kings': 'Powell River',
+  'Prince George Spruce Kings': 'Prince George',
+  'Salmon Arm Silverbacks': 'Salmon Arm',
+  'Sherwood Park Crusaders': 'Sherwood Park',
+  'Surrey Eagles': 'Surrey',
+  'Trail Smoke Eaters': 'Trail',
+  'Vernon Vipers': 'Vernon',
+  'Victoria Grizzlies': 'Victoria',
+  'Wenatchee Wild': 'Wenatchee',
+  'West Kelowna Warriors': 'West Kelowna',
+  'Spruce Grove Saints': 'Spruce Grove',
+}
+
+function getCity(teamName: string) {
+  return teamCityMap[teamName] || teamName
+}
+
 interface GameHistoryTableProps {
   officialId: string
   initialGames: GameDetails[]
@@ -107,13 +136,13 @@ export default function GameHistoryTable({
           <thead className="bg-[#1b263d]">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                #
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                 Date
               </th>
               <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                 Game
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Location
               </th>
               <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                 Role
@@ -121,12 +150,19 @@ export default function GameHistoryTable({
             </tr>
           </thead>
           <tbody className={`bg-black divide-y divide-[#1b263d] ${loading ? 'opacity-50' : ''}`}>
-            {games.map((game: GameDetails) => (
+            {games.map((game: GameDetails, index: number) => (
               <tr
                 key={game.id}
                 onClick={() => window.open(`https://lscluster.hockeytech.com/game_reports/official-game-report.php?client_code=bchl&game_id=${game.hockeytechId}&lang_id=1`, '_blank')}
                 className="group hover:bg-orange-600 hover:text-white cursor-pointer transition-colors duration-300"
               >
+                <td className={`px-6 py-4 whitespace-nowrap text-sm font-bold group-hover:text-white ${
+                  (totalGames - ((currentPage - 1) * 50) - index) % 100 === 0
+                    ? 'text-bchl-light-orange'
+                    : 'text-gray-600'
+                }`}>
+                  {totalGames - ((currentPage - 1) * 50) - index}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 group-hover:text-white">
                   {new Date(game.date).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -134,10 +170,10 @@ export default function GameHistoryTable({
                     day: 'numeric'
                   })}
                 </td>
-                <td className="px-6 py-4 text-sm text-white">
-                  {game.awayTeam}  @  {game.homeTeam}
+                <td className="px-6 py-4 text-sm">
+                  <div className="text-white">{getCity(game.awayTeam)}  @  {getCity(game.homeTeam)}</div>
+                  <div className="text-gray-400 group-hover:text-white">{game.location}</div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-400 group-hover:text-white">{game.location}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <span
                     className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
