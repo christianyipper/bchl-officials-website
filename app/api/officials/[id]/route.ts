@@ -145,6 +145,86 @@ export async function GET(
       // Ranks will remain null if calculation fails
     }
 
+    // Get game duration stats (avg, longest, shortest)
+    let gameDurationStats: {
+      avgDuration: number | null
+      longestGame: { duration: number; date: string; homeTeam: string; awayTeam: string; hockeytechId: number } | null
+      shortestGame: { duration: number; date: string; homeTeam: string; awayTeam: string; hockeytechId: number } | null
+    } = { avgDuration: null, longestGame: null, shortestGame: null }
+
+    try {
+      const avgResult = await prisma.$queryRaw<{ avg: number | null }[]>`
+        SELECT AVG(g.duration)::float as avg
+        FROM "GameOfficial" go
+        JOIN "Game" g ON go."gameId" = g.id
+        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL
+      `
+      const avg = avgResult[0]?.avg ?? null
+
+      const longestResult = await prisma.$queryRaw<{ duration: number; date: Date; home: string; away: string; hockeytechId: number }[]>`
+        SELECT g.duration, g.date, ht.name as home, at.name as away, g."hockeytechId"
+        FROM "GameOfficial" go
+        JOIN "Game" g ON go."gameId" = g.id
+        JOIN "Team" ht ON g."homeTeamId" = ht.id
+        JOIN "Team" at ON g."awayTeamId" = at.id
+        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL
+        ORDER BY g.duration DESC
+        LIMIT 1
+      `
+
+      const shortestResult = await prisma.$queryRaw<{ duration: number; date: Date; home: string; away: string; hockeytechId: number }[]>`
+        SELECT g.duration, g.date, ht.name as home, at.name as away, g."hockeytechId"
+        FROM "GameOfficial" go
+        JOIN "Game" g ON go."gameId" = g.id
+        JOIN "Team" ht ON g."homeTeamId" = ht.id
+        JOIN "Team" at ON g."awayTeamId" = at.id
+        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL
+        ORDER BY g.duration ASC
+        LIMIT 1
+      `
+
+      gameDurationStats = {
+        avgDuration: avg ? Math.round(avg) : null,
+        longestGame: longestResult[0] ? {
+          duration: longestResult[0].duration,
+          date: longestResult[0].date.toISOString(),
+          homeTeam: longestResult[0].home,
+          awayTeam: longestResult[0].away,
+          hockeytechId: longestResult[0].hockeytechId
+        } : null,
+        shortestGame: shortestResult[0] ? {
+          duration: shortestResult[0].duration,
+          date: shortestResult[0].date.toISOString(),
+          homeTeam: shortestResult[0].home,
+          awayTeam: shortestResult[0].away,
+          hockeytechId: shortestResult[0].hockeytechId
+        } : null
+      }
+    } catch (durationError) {
+      console.error('Error fetching duration stats:', durationError)
+    }
+
+    // Get top most officiated teams
+    let topTeams: { name: string; count: bigint }[] = []
+    try {
+      topTeams = await prisma.$queryRaw<{ name: string; count: bigint }[]>`
+        SELECT t.name, COUNT(*) as count FROM (
+          SELECT g."homeTeamId" as "teamId" FROM "GameOfficial" go
+          JOIN "Game" g ON go."gameId" = g.id
+          WHERE go."officialId" = ${id}
+          UNION ALL
+          SELECT g."awayTeamId" as "teamId" FROM "GameOfficial" go
+          JOIN "Game" g ON go."gameId" = g.id
+          WHERE go."officialId" = ${id}
+        ) sub
+        JOIN "Team" t ON sub."teamId" = t.id
+        GROUP BY t.name
+        ORDER BY count DESC
+      `
+    } catch (topTeamsError) {
+      console.error('Error fetching top teams:', topTeamsError)
+    }
+
     const response = {
       id: official.id,
       name: official.name,
@@ -159,6 +239,8 @@ export async function GET(
       isAhl: official.ahl === 1,
       isEchl: official.echl === 1,
       isPwhl: official.pwhl === 1,
+      topTeams: topTeams.map(t => ({ name: t.name, count: Number(t.count) })),
+      gameDurationStats,
       games,
       pagination: {
         page,

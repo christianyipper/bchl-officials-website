@@ -23,8 +23,30 @@ export default function SeasonTabs({ seasons, currentSeason }: SeasonTabsProps) 
   }
 
   return (
-    <div className="">
-      <div className="flex gap-2 flex-wrap">
+    <div>
+      {/* Mobile: dropdown */}
+      <div className="md:hidden relative inline-block">
+        <select
+          value={activeSeason}
+          onChange={(e) => handleSeasonChange(e.target.value)}
+          className="px-4 pr-10 py-2 bg-orange-600 text-white font-black uppercase text-sm appearance-none cursor-pointer focus:outline-none"
+        >
+          {seasons.map((season) => (
+            <option key={season} value={season}>
+              {season} Season
+            </option>
+          ))}
+          <option value="all">All Time</option>
+        </select>
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+          <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Desktop: buttons */}
+      <div className="hidden md:flex gap-2 flex-wrap">
         {seasons.map((season) => (
           <button
             key={season}

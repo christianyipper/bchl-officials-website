@@ -4,6 +4,42 @@ import { headers } from 'next/headers'
 import type { Metadata } from 'next'
 import GameHistoryTable from '@/app/components/GameHistoryTable'
 import AnimatedCounter from '@/app/components/AnimatedCounter'
+import OfficialTeams from '@/app/components/OfficialTeams'
+
+const teamCityMap: Record<string, string> = {
+  'Alberni Valley Bulldogs': 'Alberni Valley',
+  'Brooks Bandits': 'Brooks',
+  'Chilliwack Chiefs': 'Chilliwack',
+  'Coquitlam Express': 'Coquitlam',
+  'Cowichan Valley Capitals': 'Cowichan Valley',
+  'Cranbrook Bucks': 'Cranbrook',
+  'Langley Rivermen': 'Langley',
+  'Merritt Centennials': 'Merritt',
+  'Nanaimo Clippers': 'Nanaimo',
+  'Okotoks Oilers': 'Okotoks',
+  'Penticton Vees': 'Penticton',
+  'Powell River Kings': 'Powell River',
+  'Prince George Spruce Kings': 'Prince George',
+  'Salmon Arm Silverbacks': 'Salmon Arm',
+  'Sherwood Park Crusaders': 'Sherwood Park',
+  'Surrey Eagles': 'Surrey',
+  'Trail Smoke Eaters': 'Trail',
+  'Vernon Vipers': 'Vernon',
+  'Victoria Grizzlies': 'Victoria',
+  'Wenatchee Wild': 'Wenatchee',
+  'West Kelowna Warriors': 'West Kelowna',
+  'Spruce Grove Saints': 'Spruce Grove',
+}
+
+function getCity(teamName: string) {
+  return teamCityMap[teamName] || teamName
+}
+
+function formatDuration(minutes: number) {
+  const hrs = Math.floor(minutes / 60)
+  const mins = minutes % 60
+  return `${hrs}h ${mins}m`
+}
 
 function getOrdinal(n: number) {
   const s = ['th', 'st', 'nd', 'rd']
@@ -26,6 +62,20 @@ interface GameDetails {
   role: string
 }
 
+interface GameDurationGame {
+  duration: number
+  date: string
+  homeTeam: string
+  awayTeam: string
+  hockeytechId: number
+}
+
+interface GameDurationStats {
+  avgDuration: number | null
+  longestGame: GameDurationGame | null
+  shortestGame: GameDurationGame | null
+}
+
 interface OfficialDetails {
   id: string
   name: string
@@ -40,6 +90,8 @@ interface OfficialDetails {
   isAhl: boolean
   isEchl: boolean
   isPwhl: boolean
+  topTeams: { name: string; count: number }[]
+  gameDurationStats: GameDurationStats
   games: GameDetails[]
   pagination: {
     page: number
@@ -93,9 +145,9 @@ export default async function OfficialPage({
   const official = await getOfficial(id)
 
   return (
-    <main className="min-h-screen bg-black py-16">
+    <main className="min-h-screen bg-black pt-28 pb-16">
       <div className="container mx-auto px-4">
-        <div className="bg-black rounded-lg shadow mb-16">
+        <div className="bg-black rounded-lg shadow">
           <h1 className="text-8xl font-[zuume] font-bold italic uppercase text-white">{official.name}</h1>
           <div className="mb-6 flex flex-row align-middle items-center gap-2">
             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase border-2 flex items-center ${
@@ -138,9 +190,9 @@ export default async function OfficialPage({
               </a>
             ) : null}
           </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-orange-600 rounded-lg p-4 flex flex-col h-full">
-              <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4 md:gap-0">
+          <div className="flex flex-col md:flex-row w-full gap-4">
+            <div className="bg-orange-600 rounded-lg px-4 py-2 flex flex-col w-full h-full border-4 border-orange-600">
+              <div className="flex flex-row justify-between items-start md:items-center gap-4 md:gap-0">
                 <div className="text-lg uppercase font-black italic text-white">Total Games</div>
                 {official.totalGamesRank && (
                 <div className="text-xs uppercase font-bold italic text-orange-600 bg-white flex justify-center items-center px-3 h-6 rounded-full mt-1 md:mt-0">
@@ -155,11 +207,10 @@ export default async function OfficialPage({
                 className="text-4xl font-black italic text-white mt-auto"
               />
             </div>
-            <div className="bg-white rounded-lg p-4 flex flex-col h-full">
-              <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4 md:gap-0">
+            <div className="bg-white rounded-lg px-4 py-2 flex flex-col w-full h-full border-4 border-white">
+              <div className="flex flex-row justify-between items-start md:items-center gap-4 md:gap-0">
                 <div className="text-lg uppercase font-black italic text-black">
-                  <span className="md:hidden">As<br />Ref</span>
-                  <span className="hidden md:inline">As Referee</span>
+                  <span className="md:inline">As Referee</span>
                 </div>
                 {official.refereeGamesRank && (
                 <div className="text-xs uppercase font-bold italic text-white bg-black flex justify-center items-center px-3 h-6 rounded-full mt-1 md:mt-0">
@@ -174,10 +225,10 @@ export default async function OfficialPage({
                 className="text-4xl font-black italic text-black mt-auto"
               />
             </div>
-            <div className="bg-black rounded-lg p-4 flex flex-col h-full border-4 border-white">
-              <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4 md:gap-0">
+            <div className="bg-black rounded-lg px-4 py-2 flex flex-col w-full h-full border-4 border-white">
+              <div className="flex flex-row justify-between items-start md:items-center gap-4 md:gap-0">
                 <div className="text-lg uppercase font-black italic text-white">
-                  <span className="md:hidden">As<br />Lines</span>
+                  <span className="md:hidden">As Lines</span>
                   <span className="hidden md:inline">As Linesperson</span>
                 </div>
                 {official.linespersonGamesRank && (
@@ -190,13 +241,67 @@ export default async function OfficialPage({
                 value={official.linespersonGames}
                 delay={1200}
                 duration={2500}
-                className="text-4xl font-black italic text-white mt-auto -mb-2"
+                className="text-4xl font-black italic text-white mt-auto"
               />
             </div>
           </div>
+
+          {official.topTeams?.length > 0 && (
+            <OfficialTeams teams={official.topTeams} />
+          )}
         </div>
 
-        <h2 className="text-2xl font-bold text-white uppercase mb-4">Game History</h2>
+        {official.gameDurationStats?.avgDuration && (
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold text-white uppercase mb-4 italic">Game Duration</h2>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-4 flex flex-col bg-white rounded-lg">
+                  <div className="text-lg uppercase font-black italic text-black">Average</div>
+                  <div className="text-4xl font-black italic text-black">
+                    {formatDuration(official.gameDurationStats.avgDuration)}
+                  </div>
+                </div>
+                {official.gameDurationStats.longestGame && (
+                  <div className="p-4 flex flex-col rounded-lg border-4 border-white">
+                    <div className="text-lg uppercase font-black italic text-white">Longest</div>
+                    <div className="text-4xl font-black italic text-white">
+                      {formatDuration(official.gameDurationStats.longestGame.duration)}
+                    </div>
+                    <div className="text-sm text-white/70 mt-2">
+                      {getCity(official.gameDurationStats.longestGame.awayTeam)} @ {getCity(official.gameDurationStats.longestGame.homeTeam)}
+                    </div>
+                    <div className="text-sm text-white/50">
+                      {new Date(official.gameDurationStats.longestGame.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </div>
+                  </div>
+                )}
+                {official.gameDurationStats.shortestGame && (
+                  <div className="p-4 flex flex-col rounded-lg border-4 border-white">
+                    <div className="text-lg uppercase font-black italic text-white">Shortest</div>
+                    <div className="text-4xl font-black italic text-white">
+                      {formatDuration(official.gameDurationStats.shortestGame.duration)}
+                    </div>
+                    <div className="text-sm text-white/70 mt-2">
+                      {getCity(official.gameDurationStats.shortestGame.awayTeam)} @ {getCity(official.gameDurationStats.shortestGame.homeTeam)}
+                    </div>
+                    <div className="text-sm text-white/50">
+                      {new Date(official.gameDurationStats.shortestGame.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+        <h2 className="text-2xl font-bold text-white uppercase mb-4 italic mt-12">Game History</h2>
         <GameHistoryTable
           officialId={official.id}
           initialGames={official.games}

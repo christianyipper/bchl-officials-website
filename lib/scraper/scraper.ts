@@ -34,6 +34,8 @@ export async function scrapeGameReport(gameId: number): Promise<ScraperResult> {
     const location = extractField(bodyText, /PLAYED AT:\s*([^\n]+)/)
     const homeTeam = extractField(bodyText, /Home Team:\s*([^\n]+)/)
     const awayTeam = extractField(bodyText, /Visiting Team:\s*([^\n]+)/)
+    const startTime = extractField(bodyText, /Start:\s*(\d{1,2}:\d{2}\s*[AP]M)/)
+    const endTime = extractField(bodyText, /End:\s*(\d{1,2}:\d{2}\s*[AP]M)/)
 
     // Extract officials
     const officials = extractOfficials(bodyText)
@@ -49,6 +51,8 @@ export async function scrapeGameReport(gameId: number): Promise<ScraperResult> {
       hockeytechId: gameId,
       date,
       location: location.trim(),
+      startTime: startTime ? startTime.trim() : null,
+      endTime: endTime ? endTime.trim() : null,
       homeTeam: homeTeam.trim(),
       awayTeam: awayTeam.trim(),
       referees: officials.referees,

@@ -18,6 +18,29 @@ function getSeasonFromDate(date: Date): string {
   }
 }
 
+// Parse a time string like "7:02 PM" to minutes since midnight
+function parseTimeToMinutes(time: string): number | null {
+  const match = time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i)
+  if (!match) return null
+  let hours = parseInt(match[1])
+  const minutes = parseInt(match[2])
+  const period = match[3].toUpperCase()
+  if (period === 'PM' && hours !== 12) hours += 12
+  if (period === 'AM' && hours === 12) hours = 0
+  return hours * 60 + minutes
+}
+
+// Compute duration in minutes from start and end time strings
+function computeDuration(startTime: string | null, endTime: string | null): number | null {
+  if (!startTime || !endTime) return null
+  const startMinutes = parseTimeToMinutes(startTime)
+  const endMinutes = parseTimeToMinutes(endTime)
+  if (startMinutes === null || endMinutes === null) return null
+  let duration = endMinutes - startMinutes
+  if (duration < 0) duration += 24 * 60 // handle midnight crossing
+  return duration
+}
+
 export async function saveGameToDatabase(game: ScrapedGame) {
   try {
     // Check if game already exists
@@ -46,6 +69,7 @@ export async function saveGameToDatabase(game: ScrapedGame) {
     // Parse the date string (format: "Jan 1, 2026")
     const gameDate = new Date(game.date)
     const season = getSeasonFromDate(gameDate)
+    const duration = computeDuration(game.startTime, game.endTime)
 
     // Create the game
     const createdGame = await prisma.game.create({
@@ -54,6 +78,9 @@ export async function saveGameToDatabase(game: ScrapedGame) {
         date: gameDate,
         season: season,
         location: game.location,
+        startTime: game.startTime,
+        endTime: game.endTime,
+        duration: duration,
         homeTeamId: homeTeam.id,
         awayTeamId: awayTeam.id
       }

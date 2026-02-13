@@ -39,6 +39,9 @@ model Game {
   date         DateTime
   season       String         @default("2024-25") // e.g., "2024-25", "2023-24"
   location     String
+  startTime    String?        // e.g., "7:02 PM"
+  endTime      String?        // e.g., "9:42 PM"
+  duration     Int?           // game duration in minutes, computed from start/end
   homeTeamId   String
   homeTeam     Team           @relation("HomeTeam", fields: [homeTeamId], references: [id])
   awayTeamId   String

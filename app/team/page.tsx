@@ -56,7 +56,7 @@ export default async function Team({
 
   return (
     <main className="min-h-screen bg-black">
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 pt-28 pb-16">
         <div className="mb-8">
           <h1 className="text-8xl text-white">Officiating Team</h1>
           <p className="text-white font-bold uppercase">On-ice officiating stats</p>
