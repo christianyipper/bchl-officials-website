@@ -31,8 +31,15 @@ function getCity(teamName: string) {
   return teamCityMap[teamName] || teamName
 }
 
+interface TeamData {
+  name: string
+  count: number
+  pim: number
+  topPenalties: { offence: string; count: number }[]
+}
+
 interface OfficialTeamsProps {
-  teams: { name: string; count: number; pim: number }[]
+  teams: TeamData[]
 }
 
 export default function OfficialTeams({ teams }: OfficialTeamsProps) {
@@ -40,28 +47,58 @@ export default function OfficialTeams({ teams }: OfficialTeamsProps) {
 
   if (teams.length === 0) return null
 
-  const maxCount = teams[0].count
   const half = Math.ceil(teams.length / 2)
   const leftCol = teams.slice(0, half)
   const rightCol = teams.slice(half)
 
-  const renderRow = (team: { name: string; count: number; pim: number }) => (
-    <div key={team.name} className="flex flex-col gap-1">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-bold text-white">{getCity(team.name)}</span>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-gray-500">{team.pim} PIM</span>
-          <span className="text-sm font-bold text-gray-400">{team.count}</span>
+  // Compute global max for PIM and each offence across all teams
+  const maxPIM = Math.max(...teams.map(t => t.pim), 1)
+  const maxByOffence: Record<string, number> = {}
+  for (const team of teams) {
+    for (const p of team.topPenalties) {
+      maxByOffence[p.offence] = Math.max(maxByOffence[p.offence] || 0, p.count)
+    }
+  }
+
+  const renderRow = (team: TeamData) => {
+    return (
+      <div key={team.name} className="flex flex-col gap-1 mb-8">
+        <div className="flex items-center justify-between gap-4">
+          <span className="text-sm font-bold text-white uppercase whitespace-nowrap">{getCity(team.name)}</span>
+          <div className="w-full h-[2px] bg-gray-400"></div>
+          <span className="text-sm font-bold text-gray-400 relative flex flex-row gap-1">{team.count} <span className="text-[10px] uppercase">GP</span></span>
+        </div>
+        <div className="flex flex-row gap-3 bg-bchl-navy p-2 rounded-md">
+          <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-gray-400 truncate">PIM</span>
+              <span className="text-xs font-bold text-gray-400 ml-1">{team.pim}</span>
+            </div>
+            <div className="bg-black rounded-full h-1.5 overflow-hidden">
+              <div
+                className="bg-orange-600 h-full rounded-full"
+                style={{ width: `${(team.pim / maxPIM) * 100}%` }}
+              />
+            </div>
+          </div>
+          {team.topPenalties.map(p => (
+            <div key={p.offence} className="flex flex-col gap-0.5 flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-gray-400 truncate">{p.offence}</span>
+                <span className="text-xs font-bold text-gray-400 ml-1">{p.count}</span>
+              </div>
+              <div className="bg-black rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-orange-600 h-full rounded-full"
+                  style={{ width: `${(p.count / (maxByOffence[p.offence] || 1)) * 100}%` }}
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="bg-[#1b263d] rounded-full h-2 overflow-hidden">
-        <div
-          className="bg-orange-600 h-full rounded-full"
-          style={{ width: `${(team.count / maxCount) * 100}%` }}
-        />
-      </div>
-    </div>
-  )
+    )
+  }
 
   const mobileTeams = expanded ? teams : teams.slice(0, 5)
 
@@ -70,7 +107,7 @@ export default function OfficialTeams({ teams }: OfficialTeamsProps) {
       <h2 className="text-2xl font-bold text-white uppercase mb-4 italic">Officiated Teams</h2>
 
       {/* Mobile: single column with expand */}
-      <div className="md:hidden flex flex-col gap-3">
+      <div className="md:hidden flex flex-col gap-1">
         {mobileTeams.map(renderRow)}
         {teams.length > 5 && (
           <button
@@ -83,11 +120,11 @@ export default function OfficialTeams({ teams }: OfficialTeamsProps) {
       </div>
 
       {/* Desktop: two columns */}
-      <div className="hidden md:grid md:grid-cols-2 gap-y-2 md:divide-x md:divide-[#1b263d]">
-        <div className="flex flex-col gap-3 pr-12">
+      <div className="hidden md:grid md:grid-cols-2 gap-y-0 md:divide-x md:divide-[#1b263d]">
+        <div className="flex flex-col pr-8">
           {leftCol.map(renderRow)}
         </div>
-        <div className="flex flex-col gap-3 pl-12">
+        <div className="flex flex-col pl-8">
           {rightCol.map(renderRow)}
         </div>
       </div>

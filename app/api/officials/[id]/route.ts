@@ -211,7 +211,7 @@ export async function GET(
     }
 
     // Get top most officiated teams using Prisma ORM
-    let topTeams: { name: string; count: number; pim: number }[] = []
+    let topTeams: { name: string; count: number; pim: number; topPenalties: { offence: string; count: number }[] }[] = []
     try {
       const officialGames = await prisma.gameOfficial.findMany({
         where: { officialId: id },
@@ -220,7 +220,7 @@ export async function GET(
             select: {
               homeTeam: { select: { name: true } },
               awayTeam: { select: { name: true } },
-              penalties: { select: { minutes: true, side: true } }
+              penalties: { select: { minutes: true, side: true, offence: true } }
             }
           }
         }
@@ -228,19 +228,35 @@ export async function GET(
 
       const teamCounts: Record<string, number> = {}
       const teamPIM: Record<string, number> = {}
+      const teamPenaltyCounts: Record<string, Record<string, number>> = {}
       for (const go of officialGames) {
         const home = go.game.homeTeam.name
         const away = go.game.awayTeam.name
         teamCounts[home] = (teamCounts[home] || 0) + 1
         teamCounts[away] = (teamCounts[away] || 0) + 1
         for (const p of go.game.penalties) {
-          if (p.side === 'home') teamPIM[home] = (teamPIM[home] || 0) + p.minutes
-          else if (p.side === 'away') teamPIM[away] = (teamPIM[away] || 0) + p.minutes
+          if (p.side === 'home') {
+            teamPIM[home] = (teamPIM[home] || 0) + p.minutes
+            if (!teamPenaltyCounts[home]) teamPenaltyCounts[home] = {}
+            teamPenaltyCounts[home][p.offence] = (teamPenaltyCounts[home][p.offence] || 0) + 1
+          } else if (p.side === 'away') {
+            teamPIM[away] = (teamPIM[away] || 0) + p.minutes
+            if (!teamPenaltyCounts[away]) teamPenaltyCounts[away] = {}
+            teamPenaltyCounts[away][p.offence] = (teamPenaltyCounts[away][p.offence] || 0) + 1
+          }
         }
       }
 
       topTeams = Object.entries(teamCounts)
-        .map(([name, count]) => ({ name, count, pim: teamPIM[name] || 0 }))
+        .map(([name, count]) => ({
+          name,
+          count,
+          pim: teamPIM[name] || 0,
+          topPenalties: Object.entries(teamPenaltyCounts[name] || {})
+            .map(([offence, cnt]) => ({ offence, count: cnt }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 4)
+        }))
         .sort((a, b) => b.count - a.count)
     } catch (topTeamsError) {
       console.error('Error fetching top teams:', topTeamsError)

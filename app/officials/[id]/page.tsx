@@ -94,7 +94,7 @@ interface OfficialDetails {
   isAhl: boolean
   isEchl: boolean
   isPwhl: boolean
-  topTeams: { name: string; count: number; pim: number }[]
+  topTeams: { name: string; count: number; pim: number; topPenalties: { offence: string; count: number }[] }[]
   gameDurationStats: GameDurationStats
   penaltyStats: {
     totalPIM: number
