@@ -32,7 +32,7 @@ function getCity(teamName: string) {
 }
 
 interface OfficialTeamsProps {
-  teams: { name: string; count: number }[]
+  teams: { name: string; count: number; pim: number }[]
 }
 
 export default function OfficialTeams({ teams }: OfficialTeamsProps) {
@@ -45,11 +45,14 @@ export default function OfficialTeams({ teams }: OfficialTeamsProps) {
   const leftCol = teams.slice(0, half)
   const rightCol = teams.slice(half)
 
-  const renderRow = (team: { name: string; count: number }) => (
+  const renderRow = (team: { name: string; count: number; pim: number }) => (
     <div key={team.name} className="flex flex-col gap-1">
       <div className="flex items-center justify-between">
         <span className="text-sm font-bold text-white">{getCity(team.name)}</span>
-        <span className="text-sm font-bold text-gray-400">{team.count}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-gray-500">{team.pim} PIM</span>
+          <span className="text-sm font-bold text-gray-400">{team.count}</span>
+        </div>
       </div>
       <div className="bg-[#1b263d] rounded-full h-2 overflow-hidden">
         <div

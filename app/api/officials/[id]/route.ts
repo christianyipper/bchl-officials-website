@@ -40,7 +40,10 @@ export async function GET(
         game: {
           include: {
             homeTeam: true,
-            awayTeam: true
+            awayTeam: true,
+            penalties: {
+              select: { minutes: true, side: true }
+            }
           }
         }
       },
@@ -76,7 +79,10 @@ export async function GET(
       location: gameOfficial.game.location,
       homeTeam: gameOfficial.game.homeTeam.name,
       awayTeam: gameOfficial.game.awayTeam.name,
-      role: gameOfficial.role
+      role: gameOfficial.role,
+      duration: gameOfficial.game.duration,
+      homePIM: gameOfficial.game.penalties.filter(p => p.side === 'home').reduce((sum, p) => sum + p.minutes, 0),
+      awayPIM: gameOfficial.game.penalties.filter(p => p.side === 'away').reduce((sum, p) => sum + p.minutes, 0)
     }))
 
     const totalGames = official._count.games
@@ -204,25 +210,120 @@ export async function GET(
       console.error('Error fetching duration stats:', durationError)
     }
 
-    // Get top most officiated teams
-    let topTeams: { name: string; count: bigint }[] = []
+    // Get top most officiated teams using Prisma ORM
+    let topTeams: { name: string; count: number; pim: number }[] = []
     try {
-      topTeams = await prisma.$queryRaw<{ name: string; count: bigint }[]>`
-        SELECT t.name, COUNT(*) as count FROM (
-          SELECT g."homeTeamId" as "teamId" FROM "GameOfficial" go
-          JOIN "Game" g ON go."gameId" = g.id
-          WHERE go."officialId" = ${id}
-          UNION ALL
-          SELECT g."awayTeamId" as "teamId" FROM "GameOfficial" go
-          JOIN "Game" g ON go."gameId" = g.id
-          WHERE go."officialId" = ${id}
-        ) sub
-        JOIN "Team" t ON sub."teamId" = t.id
-        GROUP BY t.name
-        ORDER BY count DESC
-      `
+      const officialGames = await prisma.gameOfficial.findMany({
+        where: { officialId: id },
+        select: {
+          game: {
+            select: {
+              homeTeam: { select: { name: true } },
+              awayTeam: { select: { name: true } },
+              penalties: { select: { minutes: true, side: true } }
+            }
+          }
+        }
+      })
+
+      const teamCounts: Record<string, number> = {}
+      const teamPIM: Record<string, number> = {}
+      for (const go of officialGames) {
+        const home = go.game.homeTeam.name
+        const away = go.game.awayTeam.name
+        teamCounts[home] = (teamCounts[home] || 0) + 1
+        teamCounts[away] = (teamCounts[away] || 0) + 1
+        for (const p of go.game.penalties) {
+          if (p.side === 'home') teamPIM[home] = (teamPIM[home] || 0) + p.minutes
+          else if (p.side === 'away') teamPIM[away] = (teamPIM[away] || 0) + p.minutes
+        }
+      }
+
+      topTeams = Object.entries(teamCounts)
+        .map(([name, count]) => ({ name, count, pim: teamPIM[name] || 0 }))
+        .sort((a, b) => b.count - a.count)
     } catch (topTeamsError) {
       console.error('Error fetching top teams:', topTeamsError)
+    }
+
+    // Get penalty stats for all games this official worked
+    let penaltyStats: {
+      totalPIM: number
+      minors: number
+      majors: number
+      matches: number
+      misconducts: number
+      fights: number
+      instigators: number
+      aggressors: number
+      faceoffViolations: number
+      topPenalties: { offence: string; count: number }[]
+    } = {
+      totalPIM: 0,
+      minors: 0,
+      majors: 0,
+      matches: 0,
+      misconducts: 0,
+      fights: 0,
+      instigators: 0,
+      aggressors: 0,
+      faceoffViolations: 0,
+      topPenalties: []
+    }
+    try {
+      // Get all game IDs where this official was involved
+      const allGameOfficials = await prisma.gameOfficial.findMany({
+        where: { officialId: id },
+        select: { gameId: true }
+      })
+      const allGameIds = allGameOfficials.map(go => go.gameId)
+
+      if (allGameIds.length > 0) {
+        // Get all penalties from those games
+        const penalties = await prisma.penalty.findMany({
+          where: { gameId: { in: allGameIds } },
+          select: { minutes: true, offence: true }
+        })
+
+        // Calculate total PIM
+        penaltyStats.totalPIM = penalties.reduce((sum, p) => sum + p.minutes, 0)
+
+        // Calculate penalty type breakdowns
+        for (const p of penalties) {
+          const off = p.offence.toLowerCase()
+          if (off.includes('fighting')) {
+            penaltyStats.fights++
+          } else if (off === 'match' || off.startsWith('match ')) {
+            penaltyStats.matches++
+          } else if (off.includes('misconduct')) {
+            penaltyStats.misconducts++
+          } else if (p.minutes === 5) {
+            penaltyStats.majors++
+          } else if (p.minutes === 2) {
+            penaltyStats.minors++
+          }
+          if (off.includes('instigator')) {
+            penaltyStats.instigators++
+          }
+          if (off.includes('aggressor')) {
+            penaltyStats.aggressors++
+          }
+          if (off.includes('face-off violation') || off.includes('faceoff violation')) {
+            penaltyStats.faceoffViolations++
+          }
+        }
+
+        // Calculate all penalties by count (sorted descending)
+        const penaltyCounts: Record<string, number> = {}
+        for (const p of penalties) {
+          penaltyCounts[p.offence] = (penaltyCounts[p.offence] || 0) + 1
+        }
+        penaltyStats.topPenalties = Object.entries(penaltyCounts)
+          .map(([offence, count]) => ({ offence, count }))
+          .sort((a, b) => b.count - a.count)
+      }
+    } catch (penaltyError) {
+      console.error('Error fetching penalty stats:', penaltyError)
     }
 
     const response = {
@@ -239,8 +340,9 @@ export async function GET(
       isAhl: official.ahl === 1,
       isEchl: official.echl === 1,
       isPwhl: official.pwhl === 1,
-      topTeams: topTeams.map(t => ({ name: t.name, count: Number(t.count) })),
+      topTeams,
       gameDurationStats,
+      penaltyStats,
       games,
       pagination: {
         page,

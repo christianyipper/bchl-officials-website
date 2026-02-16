@@ -129,7 +129,20 @@ export async function saveGameToDatabase(game: ScrapedGame) {
 
     await Promise.all(officialPromises)
 
-    console.log(`✓ Saved game ${game.hockeytechId} to database`)
+    // Save penalties
+    if (game.penalties.length > 0) {
+      await prisma.penalty.createMany({
+        data: game.penalties.map(p => ({
+          gameId: createdGame.id,
+          period: p.period,
+          minutes: p.minutes,
+          offence: p.offence,
+          side: p.side
+        }))
+      })
+    }
+
+    console.log(`✓ Saved game ${game.hockeytechId} (${game.penalties.length} penalties)`)
     return { success: true, existed: false }
   } catch (error) {
     console.error(`Error saving game ${game.hockeytechId} to database:`, error)

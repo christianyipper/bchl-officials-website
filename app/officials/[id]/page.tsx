@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import GameHistoryTable from '@/app/components/GameHistoryTable'
 import AnimatedCounter from '@/app/components/AnimatedCounter'
 import OfficialTeams from '@/app/components/OfficialTeams'
+import OfficialPenalties from '@/app/components/OfficialPenalties'
 
 const teamCityMap: Record<string, string> = {
   'Alberni Valley Bulldogs': 'Alberni Valley',
@@ -60,6 +61,9 @@ interface GameDetails {
   homeTeam: string
   awayTeam: string
   role: string
+  duration: number | null
+  homePIM: number
+  awayPIM: number
 }
 
 interface GameDurationGame {
@@ -90,8 +94,20 @@ interface OfficialDetails {
   isAhl: boolean
   isEchl: boolean
   isPwhl: boolean
-  topTeams: { name: string; count: number }[]
+  topTeams: { name: string; count: number; pim: number }[]
   gameDurationStats: GameDurationStats
+  penaltyStats: {
+    totalPIM: number
+    minors: number
+    majors: number
+    matches: number
+    misconducts: number
+    fights: number
+    instigators: number
+    aggressors: number
+    faceoffViolations: number
+    topPenalties: { offence: string; count: number }[]
+  }
   games: GameDetails[]
   pagination: {
     page: number
@@ -248,6 +264,21 @@ export default async function OfficialPage({
 
           {official.topTeams?.length > 0 && (
             <OfficialTeams teams={official.topTeams} />
+          )}
+
+          {official.penaltyStats?.totalPIM > 0 && (
+            <OfficialPenalties
+              totalPIM={official.penaltyStats.totalPIM}
+              minors={official.penaltyStats.minors}
+              majors={official.penaltyStats.majors}
+              matches={official.penaltyStats.matches}
+              misconducts={official.penaltyStats.misconducts}
+              fights={official.penaltyStats.fights}
+              instigators={official.penaltyStats.instigators}
+              aggressors={official.penaltyStats.aggressors}
+              faceoffViolations={official.penaltyStats.faceoffViolations}
+              topPenalties={official.penaltyStats.topPenalties}
+            />
           )}
         </div>
 

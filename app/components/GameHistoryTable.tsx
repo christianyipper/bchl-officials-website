@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 interface GameDetails {
   id: string
@@ -10,6 +10,9 @@ interface GameDetails {
   homeTeam: string
   awayTeam: string
   role: string
+  duration: number | null
+  homePIM: number
+  awayPIM: number
 }
 
 const teamCityMap: Record<string, string> = {
@@ -139,10 +142,13 @@ export default function GameHistoryTable({
                 #
               </th>
               <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Date
+                Game
               </th>
               <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Game
+                Teams
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                Stats
               </th>
               <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                 Role
@@ -163,16 +169,23 @@ export default function GameHistoryTable({
                 }`}>
                   {totalGames - ((currentPage - 1) * 50) - index}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 group-hover:text-white">
-                  {new Date(game.date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                  })}
+                <td className="px-6 py-4">
+                  <div className="text-white text-sm">
+                    {new Date(game.date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </div>
+                  <div className="text-gray-400 text-xs group-hover:text-white">{game.location}</div>
                 </td>
-                <td className="px-6 py-4 text-sm">
-                  <div className="text-white">{getCity(game.awayTeam)}  @  {getCity(game.homeTeam)}</div>
-                  <div className="text-gray-400 group-hover:text-white">{game.location}</div>
+                <td className="px-6 py-4">
+                  <div className="text-white text-sm">H: {getCity(game.homeTeam)}</div>
+                  <div className="text-gray-400 text-sm group-hover:text-white">A: {getCity(game.awayTeam)}</div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-white text-sm">{game.homePIM} PIM</div>
+                  <div className="text-gray-400 text-sm group-hover:text-white">{game.awayPIM} PIM</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <span

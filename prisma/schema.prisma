@@ -47,10 +47,23 @@ model Game {
   awayTeamId   String
   awayTeam     Team           @relation("AwayTeam", fields: [awayTeamId], references: [id])
   officials    GameOfficial[]
+  penalties    Penalty[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
   @@index([season])
+}
+
+model Penalty {
+  id      String  @id @default(cuid())
+  gameId  String
+  game    Game    @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  period  String  // "1st", "2nd", "3rd", "OT"
+  minutes Int     // penalty minutes (2, 5, 10, etc.)
+  offence String  // penalty type name (e.g., "Boarding", "High-sticking")
+  side    String? // "home" or "away"
+
+  @@index([gameId])
 }
 
 model GameOfficial {

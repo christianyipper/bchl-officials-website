@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
-import { ScrapedGame, ScraperResult } from './types'
+import { ScrapedGame, ScrapedPenalty, ScraperResult } from './types'
 
 const BASE_URL = 'https://lscluster.hockeytech.com/game_reports/official-game-report.php'
 const CLIENT_CODE = 'bchl'
@@ -37,8 +37,9 @@ export async function scrapeGameReport(gameId: number): Promise<ScraperResult> {
     const startTime = extractField(bodyText, /Start:\s*(\d{1,2}:\d{2}\s*[AP]M)/)
     const endTime = extractField(bodyText, /End:\s*(\d{1,2}:\d{2}\s*[AP]M)/)
 
-    // Extract officials
+    // Extract officials and penalties
     const officials = extractOfficials(bodyText)
+    const penalties = extractPenalties($, homeTeam?.trim() || '', awayTeam?.trim() || '')
 
     if (!date || !location || !homeTeam || !awayTeam) {
       return {
@@ -56,7 +57,8 @@ export async function scrapeGameReport(gameId: number): Promise<ScraperResult> {
       homeTeam: homeTeam.trim(),
       awayTeam: awayTeam.trim(),
       referees: officials.referees,
-      linespeople: officials.linespeople
+      linespeople: officials.linespeople,
+      penalties
     }
 
     return {
@@ -100,6 +102,52 @@ function extractOfficials(text: string): { referees: string[], linespeople: stri
   }
 
   return { referees, linespeople }
+}
+
+function extractPenalties($: cheerio.CheerioAPI, homeTeam: string, awayTeam: string): ScrapedPenalty[] {
+  const penalties: ScrapedPenalty[] = []
+
+  // Find <b> elements containing "PENALTIES" text
+  $('b').each((_, el) => {
+    const text = $(el).text().trim()
+    if (!text.includes('PENALTIES')) return
+
+    // Determine side by matching header team name against home/away
+    const headerTeam = text.replace('PENALTIES', '').trim().toUpperCase()
+    let side: 'home' | 'away' | null = null
+    if (homeTeam && headerTeam && homeTeam.toUpperCase().startsWith(headerTeam)) {
+      side = 'home'
+    } else if (awayTeam && headerTeam && awayTeam.toUpperCase().startsWith(headerTeam)) {
+      side = 'away'
+    }
+
+    // The closest table contains the penalty rows
+    const table = $(el).closest('table')
+    if (!table.length) return
+
+    // Skip row 0 (header "TEAM PENALTIES") and row 1 (column headers)
+    table.find('tr').each((i, row) => {
+      if (i < 2) return
+      const cells = $(row).find('td')
+      if (cells.length < 4) return
+
+      const period = cells.eq(0).text().trim()
+      const minutesStr = cells.eq(2).text().trim()
+      const offence = cells.eq(3).text().trim()
+
+      // Only process rows with a valid period
+      if (!['1st', '2nd', '3rd'].includes(period) && !period.startsWith('OT')) return
+      if (!offence) return
+
+      // Parse minutes from "M:SS" format (e.g., "2:00" → 2, "10:00" → 10)
+      const mins = parseInt(minutesStr.split(':')[0])
+      if (isNaN(mins)) return
+
+      penalties.push({ period, minutes: mins, offence, side })
+    })
+  })
+
+  return penalties
 }
 
 export async function testGameId(gameId: number): Promise<boolean> {
