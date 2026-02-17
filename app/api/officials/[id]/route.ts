@@ -269,10 +269,20 @@ export async function GET(
       majors: number
       matches: number
       misconducts: number
+      gameMisconducts: number
       fights: number
       instigators: number
       aggressors: number
       faceoffViolations: number
+      minorsRank: number | null
+      majorsRank: number | null
+      matchesRank: number | null
+      misconductsRank: number | null
+      gameMisconductsRank: number | null
+      fightsRank: number | null
+      instigatorsRank: number | null
+      aggressorsRank: number | null
+      faceoffViolationsRank: number | null
       topPenalties: { offence: string; count: number }[]
     } = {
       totalPIM: 0,
@@ -280,10 +290,20 @@ export async function GET(
       majors: 0,
       matches: 0,
       misconducts: 0,
+      gameMisconducts: 0,
       fights: 0,
       instigators: 0,
       aggressors: 0,
       faceoffViolations: 0,
+      minorsRank: null,
+      majorsRank: null,
+      matchesRank: null,
+      misconductsRank: null,
+      gameMisconductsRank: null,
+      fightsRank: null,
+      instigatorsRank: null,
+      aggressorsRank: null,
+      faceoffViolationsRank: null,
       topPenalties: []
     }
     try {
@@ -311,6 +331,8 @@ export async function GET(
             penaltyStats.fights++
           } else if (off === 'match' || off.startsWith('match ')) {
             penaltyStats.matches++
+          } else if (off.includes('game misconduct')) {
+            penaltyStats.gameMisconducts++
           } else if (off.includes('misconduct')) {
             penaltyStats.misconducts++
           } else if (p.minutes === 5) {
@@ -337,6 +359,70 @@ export async function GET(
         penaltyStats.topPenalties = Object.entries(penaltyCounts)
           .map(([offence, count]) => ({ offence, count }))
           .sort((a, b) => b.count - a.count)
+
+        // Calculate ranks for each penalty category
+        // Get all officials' game IDs and their penalties
+        const allOfficials = await prisma.gameOfficial.findMany({
+          select: { officialId: true, gameId: true }
+        })
+        const officialGameMap: Record<string, Set<string>> = {}
+        for (const go of allOfficials) {
+          if (!officialGameMap[go.officialId]) officialGameMap[go.officialId] = new Set()
+          officialGameMap[go.officialId].add(go.gameId)
+        }
+
+        const allPenalties = await prisma.penalty.findMany({
+          select: { gameId: true, minutes: true, offence: true }
+        })
+
+        // Build per-official category counts
+        const officialCategories: Record<string, {
+          minors: number; majors: number; matches: number; misconducts: number; gameMisconducts: number
+          fights: number; instigators: number; aggressors: number; faceoffViolations: number
+        }> = {}
+
+        // Index penalties by gameId for fast lookup
+        const penaltiesByGame: Record<string, typeof allPenalties> = {}
+        for (const p of allPenalties) {
+          if (!penaltiesByGame[p.gameId]) penaltiesByGame[p.gameId] = []
+          penaltiesByGame[p.gameId].push(p)
+        }
+
+        for (const [offId, gameIds] of Object.entries(officialGameMap)) {
+          const cats = { minors: 0, majors: 0, matches: 0, misconducts: 0, gameMisconducts: 0, fights: 0, instigators: 0, aggressors: 0, faceoffViolations: 0 }
+          for (const gid of gameIds) {
+            const gamePens = penaltiesByGame[gid]
+            if (!gamePens) continue
+            for (const p of gamePens) {
+              const off = p.offence.toLowerCase()
+              if (off.includes('fighting')) cats.fights++
+              else if (off === 'match' || off.startsWith('match ')) cats.matches++
+              else if (off.includes('game misconduct')) cats.gameMisconducts++
+              else if (off.includes('misconduct')) cats.misconducts++
+              else if (p.minutes === 5) cats.majors++
+              else if (p.minutes === 2) cats.minors++
+              if (off.includes('instigator')) cats.instigators++
+              if (off.includes('aggressor')) cats.aggressors++
+              if (off.includes('face-off violation') || off.includes('faceoff violation')) cats.faceoffViolations++
+            }
+          }
+          officialCategories[offId] = cats
+        }
+
+        // Rank = number of officials with MORE in that category + 1
+        const myCats = officialCategories[id] || penaltyStats
+        const categoryKeys = ['minors', 'majors', 'matches', 'misconducts', 'gameMisconducts', 'fights', 'instigators', 'aggressors', 'faceoffViolations'] as const
+        for (const key of categoryKeys) {
+          const myVal = myCats[key]
+          if (myVal > 0) {
+            let higher = 0
+            for (const [offId, cats] of Object.entries(officialCategories)) {
+              if (offId !== id && cats[key] > myVal) higher++
+            }
+            const rankKey = `${key}Rank` as keyof typeof penaltyStats
+            ;(penaltyStats as Record<string, unknown>)[rankKey] = higher + 1
+          }
+        }
       }
     } catch (penaltyError) {
       console.error('Error fetching penalty stats:', penaltyError)

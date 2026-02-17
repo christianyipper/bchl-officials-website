@@ -102,10 +102,20 @@ interface OfficialDetails {
     majors: number
     matches: number
     misconducts: number
+    gameMisconducts: number
     fights: number
     instigators: number
     aggressors: number
     faceoffViolations: number
+    minorsRank: number | null
+    majorsRank: number | null
+    matchesRank: number | null
+    misconductsRank: number | null
+    gameMisconductsRank: number | null
+    fightsRank: number | null
+    instigatorsRank: number | null
+    aggressorsRank: number | null
+    faceoffViolationsRank: number | null
     topPenalties: { offence: string; count: number }[]
   }
   games: GameDetails[]
@@ -273,10 +283,20 @@ export default async function OfficialPage({
               majors={official.penaltyStats.majors}
               matches={official.penaltyStats.matches}
               misconducts={official.penaltyStats.misconducts}
+              gameMisconducts={official.penaltyStats.gameMisconducts}
               fights={official.penaltyStats.fights}
               instigators={official.penaltyStats.instigators}
               aggressors={official.penaltyStats.aggressors}
               faceoffViolations={official.penaltyStats.faceoffViolations}
+              minorsRank={official.penaltyStats.minorsRank}
+              majorsRank={official.penaltyStats.majorsRank}
+              matchesRank={official.penaltyStats.matchesRank}
+              misconductsRank={official.penaltyStats.misconductsRank}
+              gameMisconductsRank={official.penaltyStats.gameMisconductsRank}
+              fightsRank={official.penaltyStats.fightsRank}
+              instigatorsRank={official.penaltyStats.instigatorsRank}
+              aggressorsRank={official.penaltyStats.aggressorsRank}
+              faceoffViolationsRank={official.penaltyStats.faceoffViolationsRank}
               topPenalties={official.penaltyStats.topPenalties}
             />
           )}
@@ -285,7 +305,7 @@ export default async function OfficialPage({
         {official.gameDurationStats?.avgDuration && (
             <div className="mt-12">
               <h2 className="text-2xl font-bold text-white uppercase mb-4 italic">Game Duration</h2>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 flex flex-col bg-white rounded-lg">
                   <div className="text-lg uppercase font-black italic text-black">Average</div>
                   <div className="text-4xl font-black italic text-black">

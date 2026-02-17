@@ -43,13 +43,11 @@ interface OfficialTeamsProps {
 }
 
 export default function OfficialTeams({ teams }: OfficialTeamsProps) {
-  const [expanded, setExpanded] = useState(false)
+  const [mobileExpanded, setMobileExpanded] = useState(false)
+  const [desktopExpanded, setDesktopExpanded] = useState(false)
 
   if (teams.length === 0) return null
 
-  const half = Math.ceil(teams.length / 2)
-  const leftCol = teams.slice(0, half)
-  const rightCol = teams.slice(half)
 
   // Compute global max for PIM and each offence across all teams
   const maxPIM = Math.max(...teams.map(t => t.pim), 1)
@@ -100,7 +98,11 @@ export default function OfficialTeams({ teams }: OfficialTeamsProps) {
     )
   }
 
-  const mobileTeams = expanded ? teams : teams.slice(0, 5)
+  const mobileTeams = mobileExpanded ? teams : teams.slice(0, 5)
+  const desktopTeams = desktopExpanded ? teams : teams.slice(0, 10)
+  const desktopHalf = Math.ceil(desktopTeams.length / 2)
+  const leftCol = desktopTeams.slice(0, desktopHalf)
+  const rightCol = desktopTeams.slice(desktopHalf)
 
   return (
     <div className="mt-12">
@@ -111,22 +113,32 @@ export default function OfficialTeams({ teams }: OfficialTeamsProps) {
         {mobileTeams.map(renderRow)}
         {teams.length > 5 && (
           <button
-            onClick={() => setExpanded(!expanded)}
+            onClick={() => setMobileExpanded(!mobileExpanded)}
             className="text-sm font-bold text-gray-400 hover:text-white transition-colors duration-300 mt-2 text-left"
           >
-            {expanded ? 'Show less' : `Show all ${teams.length} teams`}
+            {mobileExpanded ? 'Show less' : `Show all ${teams.length} teams`}
           </button>
         )}
       </div>
 
       {/* Desktop: two columns */}
-      <div className="hidden md:grid md:grid-cols-2 gap-y-0 md:divide-x md:divide-[#1b263d]">
-        <div className="flex flex-col pr-8">
-          {leftCol.map(renderRow)}
+      <div className="hidden md:block">
+        <div className="grid grid-cols-2 gap-y-0 divide-x divide-[#1b263d]">
+          <div className="flex flex-col pr-8">
+            {leftCol.map(renderRow)}
+          </div>
+          <div className="flex flex-col pl-8">
+            {rightCol.map(renderRow)}
+          </div>
         </div>
-        <div className="flex flex-col pl-8">
-          {rightCol.map(renderRow)}
-        </div>
+        {teams.length > 10 && (
+          <button
+            onClick={() => setDesktopExpanded(!desktopExpanded)}
+            className="text-sm font-bold text-gray-400 hover:text-white transition-colors duration-300 mt-2 text-left"
+          >
+            {desktopExpanded ? 'Show less' : `Show all ${teams.length} teams`}
+          </button>
+        )}
       </div>
     </div>
   )
