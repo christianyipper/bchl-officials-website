@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { headers } from 'next/headers'
 
 interface Official {
   id: string
@@ -17,7 +18,10 @@ interface Game {
 }
 
 async function getGames(): Promise<Game[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  const headersList = await headers()
+  const host = headersList.get('host') || 'localhost:3000'
+  const protocol = host.includes('localhost') ? 'http' : 'https'
+  const baseUrl = `${protocol}://${host}`
   const res = await fetch(`${baseUrl}/api/games`, {
     cache: 'no-store'
   })

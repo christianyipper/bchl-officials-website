@@ -1,3 +1,4 @@
+import { headers } from 'next/headers'
 import OfficialsPageClient from '../components/OfficialsPageClient'
 
 interface OfficialSummary {
@@ -13,8 +14,15 @@ interface OfficialSummary {
   isPwhl: boolean
 }
 
+async function getBaseUrl() {
+  const headersList = await headers()
+  const host = headersList.get('host') || 'localhost:3000'
+  const protocol = host.includes('localhost') ? 'http' : 'https'
+  return `${protocol}://${host}`
+}
+
 async function getOfficials(season?: string): Promise<OfficialSummary[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
   const url = season
     ? `${baseUrl}/api/officials?season=${season}`
     : `${baseUrl}/api/officials`
@@ -31,7 +39,7 @@ async function getOfficials(season?: string): Promise<OfficialSummary[]> {
 }
 
 async function getSeasons(): Promise<string[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
   const res = await fetch(`${baseUrl}/api/seasons`, {
     next: { revalidate: 300 } // Cache for 5 minutes
   })
