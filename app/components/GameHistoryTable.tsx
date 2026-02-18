@@ -50,6 +50,7 @@ interface GameHistoryTableProps {
   initialPage: number
   totalPages: number
   totalGames: number
+  currentSeason?: string
 }
 
 export default function GameHistoryTable({
@@ -57,7 +58,8 @@ export default function GameHistoryTable({
   initialGames,
   initialPage,
   totalPages,
-  totalGames
+  totalGames,
+  currentSeason
 }: GameHistoryTableProps) {
   const [games, setGames] = useState<GameDetails[]>(initialGames)
   const [currentPage, setCurrentPage] = useState(initialPage)
@@ -66,7 +68,8 @@ export default function GameHistoryTable({
   const loadPage = async (page: number) => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/officials/${officialId}?page=${page}&limit=50`)
+      const seasonParam = currentSeason && currentSeason !== 'all' ? `&season=${currentSeason}` : ''
+      const res = await fetch(`/api/officials/${officialId}?page=${page}&limit=50${seasonParam}`)
       const data = await res.json()
       setGames(data.games)
       setCurrentPage(page)

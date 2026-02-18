@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(
@@ -11,17 +12,14 @@ export async function GET(
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '50')
     const skip = (page - 1) * limit
+    const season = searchParams.get('season') || null
 
-    // First, get the official with game counts
+    // Season filter condition reused across queries
+    const seasonFilter = season ? { game: { season } } : {}
+
+    // First, get the official
     const official = await prisma.official.findUnique({
-      where: { id },
-      include: {
-        _count: {
-          select: {
-            games: true
-          }
-        }
-      }
+      where: { id }
     })
 
     if (!official) {
@@ -34,7 +32,8 @@ export async function GET(
     // Get paginated games
     const gameOfficials = await prisma.gameOfficial.findMany({
       where: {
-        officialId: id
+        officialId: id,
+        ...seasonFilter
       },
       include: {
         game: {
@@ -56,20 +55,102 @@ export async function GET(
       take: limit
     })
 
-    // Get role counts
+    // Get role counts (filtered by season)
     const refereeGames = await prisma.gameOfficial.count({
       where: {
         officialId: id,
-        role: 'referee'
+        role: 'referee',
+        ...seasonFilter
       }
     })
 
     const linespersonGames = await prisma.gameOfficial.count({
       where: {
         officialId: id,
-        role: 'linesperson'
+        role: 'linesperson',
+        ...seasonFilter
       }
     })
+
+    // Total games for this official (filtered by season)
+    const totalGames = refereeGames + linespersonGames
+
+    // Build games timeline (for sparkline graphs)
+    const timelineGames = await prisma.gameOfficial.findMany({
+      where: { officialId: id, ...seasonFilter },
+      select: { role: true, game: { select: { date: true } } }
+    })
+
+    let gamesTimeline: { period: string; total: number; referee: number; linesperson: number }[]
+    let useWeekly = false
+
+    if (season) {
+      // Per-season: group by week
+      useWeekly = true
+      const weekMap: Record<string, { total: number; referee: number; linesperson: number }> = {}
+      for (const tg of timelineGames) {
+        const d = tg.game.date
+        const jan4 = new Date(d.getFullYear(), 0, 4)
+        const dayNum = Math.ceil(((d.getTime() - jan4.getTime()) / 86400000) + jan4.getDay() + 1)
+        const weekNum = Math.ceil(dayNum / 7)
+        const key = `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`
+        if (!weekMap[key]) weekMap[key] = { total: 0, referee: 0, linesperson: 0 }
+        weekMap[key].total++
+        if (tg.role === 'referee') weekMap[key].referee++
+        else weekMap[key].linesperson++
+      }
+      // Fill gaps between first and last week
+      const weekKeys = Object.keys(weekMap).sort()
+      const allWeeks: string[] = []
+      if (weekKeys.length >= 2) {
+        let [curYear, curWeek] = weekKeys[0].split('-W').map(Number)
+        const [endYear, endWeek] = weekKeys[weekKeys.length - 1].split('-W').map(Number)
+        while (curYear < endYear || (curYear === endYear && curWeek <= endWeek)) {
+          allWeeks.push(`${curYear}-W${String(curWeek).padStart(2, '0')}`)
+          curWeek++
+          if (curWeek > 52) { curWeek = 1; curYear++ }
+        }
+      } else {
+        allWeeks.push(...weekKeys)
+      }
+      gamesTimeline = allWeeks.map(period => ({
+        period,
+        total: weekMap[period]?.total || 0,
+        referee: weekMap[period]?.referee || 0,
+        linesperson: weekMap[period]?.linesperson || 0
+      }))
+    } else {
+      // All time: group by month
+      const monthMap: Record<string, { total: number; referee: number; linesperson: number }> = {}
+      for (const tg of timelineGames) {
+        const d = tg.game.date
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        if (!monthMap[key]) monthMap[key] = { total: 0, referee: 0, linesperson: 0 }
+        monthMap[key].total++
+        if (tg.role === 'referee') monthMap[key].referee++
+        else monthMap[key].linesperson++
+      }
+      // Fill gaps between first and last month
+      const monthKeys = Object.keys(monthMap).sort()
+      const allMonths: string[] = []
+      if (monthKeys.length >= 2) {
+        let [curYear, curMonth] = monthKeys[0].split('-').map(Number)
+        const [endYear, endMonth] = monthKeys[monthKeys.length - 1].split('-').map(Number)
+        while (curYear < endYear || (curYear === endYear && curMonth <= endMonth)) {
+          allMonths.push(`${curYear}-${String(curMonth).padStart(2, '0')}`)
+          curMonth++
+          if (curMonth > 12) { curMonth = 1; curYear++ }
+        }
+      } else {
+        allMonths.push(...monthKeys)
+      }
+      gamesTimeline = allMonths.map(period => ({
+        period,
+        total: monthMap[period]?.total || 0,
+        referee: monthMap[period]?.referee || 0,
+        linesperson: monthMap[period]?.linesperson || 0
+      }))
+    }
 
     // Transform the data to match the expected format
     const games = gameOfficials.map(gameOfficial => ({
@@ -85,7 +166,6 @@ export async function GET(
       awayPIM: gameOfficial.game.penalties.filter(p => p.side === 'away').reduce((sum, p) => sum + p.minutes, 0)
     }))
 
-    const totalGames = official._count.games
     const totalPages = Math.ceil(totalGames / limit)
 
     // Check if official is active (has games in current season: 2025-26)
@@ -106,13 +186,24 @@ export async function GET(
     let linespersonGamesRank: number | null = null
 
     try {
+      const seasonJoin = season
+        ? Prisma.sql`JOIN "Game" g2 ON go."gameId" = g2.id`
+        : Prisma.empty
+      const seasonWhere = season
+        ? Prisma.sql`g2.season = ${season}`
+        : Prisma.empty
+
       if (totalGames > 0) {
-        // Count officials with more total games
+        const whereClause = season
+          ? Prisma.sql`WHERE ${seasonWhere}`
+          : Prisma.empty
         const result = await prisma.$queryRaw<{ count: bigint }[]>`
           SELECT COUNT(*) as count FROM (
-            SELECT "officialId"
-            FROM "GameOfficial"
-            GROUP BY "officialId"
+            SELECT go."officialId"
+            FROM "GameOfficial" go
+            ${seasonJoin}
+            ${whereClause}
+            GROUP BY go."officialId"
             HAVING COUNT(*) > ${totalGames}
           ) as officials_with_more
         `
@@ -120,13 +211,16 @@ export async function GET(
       }
 
       if (refereeGames > 0) {
-        // Count officials with more referee games
+        const whereClause = season
+          ? Prisma.sql`WHERE ${seasonWhere} AND go.role = 'referee'`
+          : Prisma.sql`WHERE go.role = 'referee'`
         const result = await prisma.$queryRaw<{ count: bigint }[]>`
           SELECT COUNT(*) as count FROM (
-            SELECT "officialId"
-            FROM "GameOfficial"
-            WHERE role = 'referee'
-            GROUP BY "officialId"
+            SELECT go."officialId"
+            FROM "GameOfficial" go
+            ${seasonJoin}
+            ${whereClause}
+            GROUP BY go."officialId"
             HAVING COUNT(*) > ${refereeGames}
           ) as officials_with_more
         `
@@ -134,13 +228,16 @@ export async function GET(
       }
 
       if (linespersonGames > 0) {
-        // Count officials with more linesperson games
+        const whereClause = season
+          ? Prisma.sql`WHERE ${seasonWhere} AND go.role = 'linesperson'`
+          : Prisma.sql`WHERE go.role = 'linesperson'`
         const result = await prisma.$queryRaw<{ count: bigint }[]>`
           SELECT COUNT(*) as count FROM (
-            SELECT "officialId"
-            FROM "GameOfficial"
-            WHERE role = 'linesperson'
-            GROUP BY "officialId"
+            SELECT go."officialId"
+            FROM "GameOfficial" go
+            ${seasonJoin}
+            ${whereClause}
+            GROUP BY go."officialId"
             HAVING COUNT(*) > ${linespersonGames}
           ) as officials_with_more
         `
@@ -148,7 +245,6 @@ export async function GET(
       }
     } catch (rankError) {
       console.error('Error calculating ranks:', rankError)
-      // Ranks will remain null if calculation fails
     }
 
     // Get game duration stats (avg, longest, shortest)
@@ -159,11 +255,15 @@ export async function GET(
     } = { avgDuration: null, longestGame: null, shortestGame: null }
 
     try {
+      const seasonDurationFilter = season
+        ? Prisma.sql` AND g.season = ${season}`
+        : Prisma.empty
+
       const avgResult = await prisma.$queryRaw<{ avg: number | null }[]>`
         SELECT AVG(g.duration)::float as avg
         FROM "GameOfficial" go
         JOIN "Game" g ON go."gameId" = g.id
-        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL
+        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL${seasonDurationFilter}
       `
       const avg = avgResult[0]?.avg ?? null
 
@@ -173,7 +273,7 @@ export async function GET(
         JOIN "Game" g ON go."gameId" = g.id
         JOIN "Team" ht ON g."homeTeamId" = ht.id
         JOIN "Team" at ON g."awayTeamId" = at.id
-        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL
+        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL${seasonDurationFilter}
         ORDER BY g.duration DESC
         LIMIT 1
       `
@@ -184,7 +284,7 @@ export async function GET(
         JOIN "Game" g ON go."gameId" = g.id
         JOIN "Team" ht ON g."homeTeamId" = ht.id
         JOIN "Team" at ON g."awayTeamId" = at.id
-        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL
+        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL${seasonDurationFilter}
         ORDER BY g.duration ASC
         LIMIT 1
       `
@@ -214,7 +314,7 @@ export async function GET(
     let topTeams: { name: string; count: number; pim: number; topPenalties: { offence: string; count: number }[] }[] = []
     try {
       const officialGames = await prisma.gameOfficial.findMany({
-        where: { officialId: id },
+        where: { officialId: id, ...seasonFilter },
         select: {
           game: {
             select: {
@@ -307,9 +407,9 @@ export async function GET(
       topPenalties: []
     }
     try {
-      // Get all game IDs where this official was involved
+      // Get all game IDs where this official was involved (filtered by season)
       const allGameOfficials = await prisma.gameOfficial.findMany({
-        where: { officialId: id },
+        where: { officialId: id, ...seasonFilter },
         select: { gameId: true }
       })
       const allGameIds = allGameOfficials.map(go => go.gameId)
@@ -360,9 +460,9 @@ export async function GET(
           .map(([offence, count]) => ({ offence, count }))
           .sort((a, b) => b.count - a.count)
 
-        // Calculate ranks for each penalty category
-        // Get all officials' game IDs and their penalties
+        // Calculate ranks for each penalty category (filtered by season)
         const allOfficials = await prisma.gameOfficial.findMany({
+          where: seasonFilter,
           select: { officialId: true, gameId: true }
         })
         const officialGameMap: Record<string, Set<string>> = {}
@@ -371,7 +471,14 @@ export async function GET(
           officialGameMap[go.officialId].add(go.gameId)
         }
 
+        // Get all game IDs in the season for penalty lookup
+        const allSeasonGameIds = new Set<string>()
+        for (const gameIds of Object.values(officialGameMap)) {
+          for (const gid of gameIds) allSeasonGameIds.add(gid)
+        }
+
         const allPenalties = await prisma.penalty.findMany({
+          where: { gameId: { in: [...allSeasonGameIds] } },
           select: { gameId: true, minutes: true, offence: true }
         })
 
@@ -428,6 +535,115 @@ export async function GET(
       console.error('Error fetching penalty stats:', penaltyError)
     }
 
+    // Team chemistry: top co-officials by role with timelines
+    let teamChemistry: {
+      topReferees: { id: string; name: string; games: number; timeline: number[] }[]
+      topLinespeople: { id: string; name: string; games: number; timeline: number[] }[]
+      periods: string[]
+    } = { topReferees: [], topLinespeople: [], periods: [] }
+
+    try {
+      // Get all game IDs for this official (filtered by season)
+      const myGameOfficials = await prisma.gameOfficial.findMany({
+        where: { officialId: id, ...seasonFilter },
+        select: { gameId: true }
+      })
+      const myGameIds = myGameOfficials.map(go => go.gameId)
+
+      if (myGameIds.length > 0) {
+        // Find all co-officials on those games (excluding self), include game date for timelines
+        const coOfficials = await prisma.gameOfficial.findMany({
+          where: {
+            gameId: { in: myGameIds },
+            officialId: { not: id }
+          },
+          select: {
+            officialId: true,
+            role: true,
+            official: { select: { name: true } },
+            game: { select: { date: true } }
+          }
+        })
+
+        // Group by officialId + role, also track dates per period
+        const refCounts: Record<string, { name: string; count: number; periods: Record<string, number> }> = {}
+        const linesCounts: Record<string, { name: string; count: number; periods: Record<string, number> }> = {}
+
+        // Chemistry period grouping: by season for all-time, by week for per-season
+        const getChemistryPeriodKey = (d: Date) => {
+          if (season) {
+            const jan4 = new Date(d.getFullYear(), 0, 4)
+            const dayNum = Math.ceil(((d.getTime() - jan4.getTime()) / 86400000) + jan4.getDay() + 1)
+            const weekNum = Math.ceil(dayNum / 7)
+            return `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`
+          }
+          // All-time: group by season (Sep+ = current year to next year)
+          const month = d.getMonth()
+          const year = d.getFullYear()
+          if (month >= 8) { // Sep or later
+            return `${year}-${String(year + 1).slice(2)}`
+          }
+          return `${year - 1}-${String(year).slice(2)}`
+        }
+
+        for (const co of coOfficials) {
+          const map = co.role === 'referee' ? refCounts : linesCounts
+          if (!map[co.officialId]) {
+            map[co.officialId] = { name: co.official.name, count: 0, periods: {} }
+          }
+          map[co.officialId].count++
+          const period = getChemistryPeriodKey(co.game.date)
+          map[co.officialId].periods[period] = (map[co.officialId].periods[period] || 0) + 1
+        }
+
+        // Build chemistry periods: by season for all-time, by week for per-season
+        let chemistryPeriods: string[]
+        if (season) {
+          chemistryPeriods = gamesTimeline.map(t => t.period)
+        } else {
+          // Collect all distinct season keys from co-official data
+          const seasonSet = new Set<string>()
+          for (const data of Object.values(refCounts)) {
+            for (const p of Object.keys(data.periods)) seasonSet.add(p)
+          }
+          for (const data of Object.values(linesCounts)) {
+            for (const p of Object.keys(data.periods)) seasonSet.add(p)
+          }
+          const sortedSeasons = [...seasonSet].sort()
+          // Fill gaps between first and last season
+          chemistryPeriods = []
+          if (sortedSeasons.length >= 2) {
+            let startYear = parseInt(sortedSeasons[0].split('-')[0], 10)
+            const endYear = parseInt(sortedSeasons[sortedSeasons.length - 1].split('-')[0], 10)
+            while (startYear <= endYear) {
+              chemistryPeriods.push(`${startYear}-${String(startYear + 1).slice(2)}`)
+              startYear++
+            }
+          } else {
+            chemistryPeriods = sortedSeasons
+          }
+        }
+
+        teamChemistry.periods = chemistryPeriods
+
+        const buildTop = (counts: typeof refCounts) =>
+          Object.entries(counts)
+            .map(([coId, data]) => ({
+              id: coId,
+              name: data.name,
+              games: data.count,
+              timeline: chemistryPeriods.map(p => data.periods[p] || 0)
+            }))
+            .sort((a, b) => b.games - a.games)
+            .slice(0, 5)
+
+        teamChemistry.topReferees = buildTop(refCounts)
+        teamChemistry.topLinespeople = buildTop(linesCounts)
+      }
+    } catch (chemistryError) {
+      console.error('Error fetching team chemistry:', chemistryError)
+    }
+
     const response = {
       id: official.id,
       name: official.name,
@@ -445,6 +661,9 @@ export async function GET(
       topTeams,
       gameDurationStats,
       penaltyStats,
+      teamChemistry,
+      gamesTimeline,
+      useWeekly,
       games,
       pagination: {
         page,

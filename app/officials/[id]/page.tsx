@@ -6,6 +6,8 @@ import GameHistoryTable from '@/app/components/GameHistoryTable'
 import AnimatedCounter from '@/app/components/AnimatedCounter'
 import OfficialTeams from '@/app/components/OfficialTeams'
 import OfficialPenalties from '@/app/components/OfficialPenalties'
+import SeasonTabs from '@/app/components/SeasonTabs'
+import Sparkline from '@/app/components/Sparkline'
 
 const teamCityMap: Record<string, string> = {
   'Alberni Valley Bulldogs': 'Alberni Valley',
@@ -52,6 +54,33 @@ function getOrdinal(n: number) {
     </>
   )
 }
+
+const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function getChemistryLabels(periods: string[], useWeekly: boolean): string[] {
+  if (!useWeekly) {
+    // All-time: periods are season keys like "2024-25"
+    return periods.map(p => {
+      const parts = p.split('-')
+      return `${parts[0].slice(2)}/${parts[1]}`
+    })
+  }
+  // Per-season: weekly periods, use month labels
+  let lastMonth = -1
+  return periods.map(p => {
+    const year = parseInt(p.split('-')[0], 10)
+    const week = parseInt(p.split('W')[1], 10)
+    const jan4 = new Date(year, 0, 4)
+    const d = new Date(jan4.getTime() + (week - 1) * 7 * 86400000)
+    const month = d.getMonth()
+    if (month !== lastMonth) {
+      lastMonth = month
+      return MONTH_ABBR[month]
+    }
+    return ''
+  })
+}
+
 
 interface GameDetails {
   id: string
@@ -118,6 +147,13 @@ interface OfficialDetails {
     faceoffViolationsRank: number | null
     topPenalties: { offence: string; count: number }[]
   }
+  teamChemistry: {
+    topReferees: { id: string; name: string; games: number; timeline: number[] }[]
+    topLinespeople: { id: string; name: string; games: number; timeline: number[] }[]
+    periods: string[]
+  }
+  gamesTimeline: { period: string; total: number; referee: number; linesperson: number }[]
+  useWeekly: boolean
   games: GameDetails[]
   pagination: {
     page: number
@@ -127,15 +163,19 @@ interface OfficialDetails {
   }
 }
 
-async function getOfficial(id: string): Promise<OfficialDetails> {
-  // Get the host from request headers for proper URL construction
+async function getBaseUrl() {
   const headersList = await headers()
   const host = headersList.get('host') || 'localhost:3000'
   const protocol = host.includes('localhost') ? 'http' : 'https'
-  const baseUrl = `${protocol}://${host}`
+  return `${protocol}://${host}`
+}
 
-  const res = await fetch(`${baseUrl}/api/officials/${id}?page=1&limit=50`, {
-    next: { revalidate: 60 } // Cache for 60 seconds
+async function getOfficial(id: string, season?: string): Promise<OfficialDetails> {
+  const baseUrl = await getBaseUrl()
+  const seasonParam = season ? `&season=${season}` : ''
+
+  const res = await fetch(`${baseUrl}/api/officials/${id}?page=1&limit=50${seasonParam}`, {
+    next: { revalidate: 60 }
   })
 
   if (!res.ok) {
@@ -148,13 +188,26 @@ async function getOfficial(id: string): Promise<OfficialDetails> {
   return res.json()
 }
 
+async function getSeasons(): Promise<string[]> {
+  const baseUrl = await getBaseUrl()
+  const res = await fetch(`${baseUrl}/api/seasons`, {
+    next: { revalidate: 300 }
+  })
+  if (!res.ok) return []
+  return res.json()
+}
+
 export async function generateMetadata({
-  params
+  params,
+  searchParams
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ season?: string }>
 }): Promise<Metadata> {
   const { id } = await params
-  const official = await getOfficial(id)
+  const { season } = await searchParams
+  const selectedSeason = season && season !== 'all' ? season : undefined
+  const official = await getOfficial(id, selectedSeason)
 
   return {
     title: `${official.name} - BCHL Officiating`,
@@ -163,12 +216,18 @@ export async function generateMetadata({
 }
 
 export default async function OfficialPage({
-  params
+  params,
+  searchParams
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ season?: string }>
 }) {
   const { id } = await params
-  const official = await getOfficial(id)
+  const { season } = await searchParams
+  const selectedSeason = season && season !== 'all' ? season : undefined
+  const official = await getOfficial(id, selectedSeason)
+  const seasons = await getSeasons()
+  const currentSeason = season || 'all'
 
   return (
     <main className="min-h-screen bg-black pt-28 pb-16">
@@ -216,8 +275,11 @@ export default async function OfficialPage({
               </a>
             ) : null}
           </div>
+          <div className="mb-6">
+            <SeasonTabs seasons={seasons} currentSeason={currentSeason} />
+          </div>
           <div className="flex flex-col md:flex-row w-full gap-4">
-            <div className="bg-orange-600 rounded-lg px-4 py-2 flex flex-col w-full h-full border-4 border-orange-600">
+            <div className="relative bg-orange-600 rounded-lg px-4 py-2 flex flex-col w-full h-full border-4 border-orange-600 overflow-hidden">
               <div className="flex flex-row justify-between items-start md:items-center gap-4 md:gap-0">
                 <div className="text-lg uppercase font-black italic text-white">Total Games</div>
                 {official.totalGamesRank && (
@@ -230,10 +292,11 @@ export default async function OfficialPage({
                 value={official.totalGames}
                 delay={1200}
                 duration={2500}
-                className="text-4xl font-black italic text-white mt-auto"
+                className="text-4xl font-black italic text-white relative z-10"
               />
+              <Sparkline data={official.gamesTimeline.map(t => t.total)} color="white" className="absolute right-0 bottom-0 w-[80%] h-12" />
             </div>
-            <div className="bg-white rounded-lg px-4 py-2 flex flex-col w-full h-full border-4 border-white">
+            <div className="relative bg-white rounded-lg px-4 py-2 flex flex-col w-full h-full border-4 border-white overflow-hidden">
               <div className="flex flex-row justify-between items-start md:items-center gap-4 md:gap-0">
                 <div className="text-lg uppercase font-black italic text-black">
                   <span className="md:inline">As Referee</span>
@@ -248,10 +311,11 @@ export default async function OfficialPage({
                 value={official.refereeGames}
                 delay={1200}
                 duration={2500}
-                className="text-4xl font-black italic text-black mt-auto"
+                className="text-4xl font-black italic text-black relative z-10"
               />
+              <Sparkline data={official.gamesTimeline.map(t => t.referee)} color="black" className="absolute right-0 bottom-0 w-[80%] h-12" />
             </div>
-            <div className="bg-black rounded-lg px-4 py-2 flex flex-col w-full h-full border-4 border-white">
+            <div className="relative bg-black rounded-lg px-4 py-2 flex flex-col w-full h-full border-4 border-white overflow-hidden">
               <div className="flex flex-row justify-between items-start md:items-center gap-4 md:gap-0">
                 <div className="text-lg uppercase font-black italic text-white">
                   <span className="md:hidden">As Lines</span>
@@ -267,8 +331,9 @@ export default async function OfficialPage({
                 value={official.linespersonGames}
                 delay={1200}
                 duration={2500}
-                className="text-4xl font-black italic text-white mt-auto"
+                className="text-4xl font-black italic text-white relative z-10"
               />
+                <Sparkline data={official.gamesTimeline.map(t => t.linesperson)} color="white" className="absolute right-0 bottom-0 w-[80%] h-12" />
             </div>
           </div>
 
@@ -301,6 +366,70 @@ export default async function OfficialPage({
             />
           )}
         </div>
+
+        {(official.teamChemistry?.topReferees.length > 0 || official.teamChemistry?.topLinespeople.length > 0) && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-white uppercase mb-4 italic">Chemistry</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {official.teamChemistry.topReferees.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-bold text-gray-400 uppercase bg-[#1b263d] py-2 px-4">Top Referees</h3>
+                  <div className="divide-y divide-[#1b263d]">
+                    {official.teamChemistry.topReferees.map((ref, idx) => (
+                      <a
+                        key={ref.id}
+                        href={`/officials/${ref.id}${currentSeason !== 'all' ? `?season=${currentSeason}` : ''}`}
+                        className="flex justify-between items-center py-3 px-4 bg-black hover:bg-orange-600 transition-colors duration-300 group"
+                      >
+                        <span className="text-white font-bold uppercase flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: ['#ea580c', '#06b6d4', '#f59e0b', '#84cc16', '#d946ef'][idx] }} />
+                          {ref.name}
+                        </span>
+                        <span className="text-gray-400 group-hover:text-white text-sm font-bold">{ref.games}</span>
+                      </a>
+                    ))}
+                  </div>
+                  <Sparkline
+                    datasets={official.teamChemistry.topReferees.map((ref, idx) => ({
+                      data: ref.timeline,
+                      color: ['#ea580c', '#06b6d4', '#f59e0b', '#84cc16', '#d946ef'][idx]
+                    }))}
+                    labels={getChemistryLabels(official.teamChemistry.periods, official.useWeekly)}
+                    className="w-full mt-2"
+                  />
+                </div>
+              )}
+              {official.teamChemistry.topLinespeople.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-bold text-gray-400 uppercase bg-[#1b263d] py-2 px-4">Top Linespeople</h3>
+                  <div className="divide-y divide-[#1b263d]">
+                    {official.teamChemistry.topLinespeople.map((lines, idx) => (
+                      <a
+                        key={lines.id}
+                        href={`/officials/${lines.id}${currentSeason !== 'all' ? `?season=${currentSeason}` : ''}`}
+                        className="flex justify-between items-center py-3 px-4 bg-black hover:bg-orange-600 transition-colors duration-300 group"
+                      >
+                        <span className="text-white font-bold uppercase flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: ['#ea580c', '#06b6d4', '#f59e0b', '#84cc16', '#d946ef'][idx] }} />
+                          {lines.name}
+                        </span>
+                        <span className="text-gray-400 group-hover:text-white text-sm font-bold">{lines.games}</span>
+                      </a>
+                    ))}
+                  </div>
+                  <Sparkline
+                    datasets={official.teamChemistry.topLinespeople.map((lines, idx) => ({
+                      data: lines.timeline,
+                      color: ['#ea580c', '#06b6d4', '#f59e0b', '#84cc16', '#d946ef'][idx]
+                    }))}
+                    labels={getChemistryLabels(official.teamChemistry.periods, official.useWeekly)}
+                    className="w-full mt-2"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {official.gameDurationStats?.avgDuration && (
             <div className="mt-12">
@@ -359,6 +488,7 @@ export default async function OfficialPage({
           initialPage={official.pagination.page}
           totalPages={official.pagination.totalPages}
           totalGames={official.pagination.totalGames}
+          currentSeason={currentSeason}
         />
       </div>
     </main>
