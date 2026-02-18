@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { headers } from 'next/headers'
 import OfficialsPageClient from '../components/OfficialsPageClient'
 
 interface OfficialSummary {
@@ -14,64 +14,39 @@ interface OfficialSummary {
   isPwhl: boolean
 }
 
-async function getOfficials(season?: string): Promise<OfficialSummary[]> {
-  const officials = await prisma.official.findMany({
-    include: {
-      games: {
-        include: {
-          game: {
-            include: {
-              homeTeam: true,
-              awayTeam: true
-            }
-          }
-        },
-        ...(season && {
-          where: {
-            game: {
-              season: season
-            }
-          }
-        })
-      }
-    },
-    orderBy: {
-      name: 'asc'
-    }
-  })
-
-  const activeStatusMap = new Map<string, boolean>()
-  for (const official of officials) {
-    const currentSeasonCount = await prisma.gameOfficial.count({
-      where: {
-        officialId: official.id,
-        game: {
-          season: '2025-26'
-        }
-      }
-    })
-    activeStatusMap.set(official.id, currentSeasonCount > 0)
-  }
-
-  return officials.map((official) => ({
-    id: official.id,
-    name: official.name,
-    totalGames: official.games.length,
-    refereeGames: official.games.filter(g => g.role === 'referee').length,
-    linespersonGames: official.games.filter(g => g.role === 'linesperson').length,
-    isActive: activeStatusMap.get(official.id) || false,
-    isOriginal57: official.original57 === 1,
-    isAhl: official.ahl === 1,
-    isEchl: official.echl === 1,
-    isPwhl: official.pwhl === 1
-  }))
+async function getBaseUrl() {
+  const headersList = await headers()
+  const host = headersList.get('host') || 'localhost:3000'
+  const protocol = host.includes('localhost') ? 'http' : 'https'
+  return `${protocol}://${host}`
 }
 
-async function getSeasons(): Promise<string[]> {
-  const games = await prisma.game.findMany({
-    select: { season: true }
+async function getOfficials(baseUrl: string, season?: string): Promise<OfficialSummary[]> {
+  const url = season
+    ? `${baseUrl}/api/officials?season=${season}`
+    : `${baseUrl}/api/officials`
+
+  const res = await fetch(url, {
+    next: { revalidate: 60 }
   })
-  return [...new Set(games.map(g => g.season))].sort().reverse()
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch officials')
+  }
+
+  return res.json()
+}
+
+async function getSeasons(baseUrl: string): Promise<string[]> {
+  const res = await fetch(`${baseUrl}/api/seasons`, {
+    next: { revalidate: 300 }
+  })
+
+  if (!res.ok) {
+    return []
+  }
+
+  return res.json()
 }
 
 export default async function Team({
@@ -81,8 +56,9 @@ export default async function Team({
 }) {
   const params = await searchParams
   const season = params.season === 'all' ? undefined : (params.season || '2025-26')
-  const officials = await getOfficials(season)
-  const seasons = await getSeasons()
+  const baseUrl = await getBaseUrl()
+  const officials = await getOfficials(baseUrl, season)
+  const seasons = await getSeasons(baseUrl)
 
   return (
     <main className="min-h-screen bg-black">
