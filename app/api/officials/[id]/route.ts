@@ -168,16 +168,14 @@ export async function GET(
 
     const totalPages = Math.ceil(totalGames / limit)
 
-    // Check if official is active (has games in current season: 2025-26)
-    const currentSeasonGames = await prisma.gameOfficial.count({
-      where: {
-        officialId: id,
-        game: {
-          season: '2025-26'
-        }
-      }
+    // Get all seasons this official has games in
+    const officialSeasonGames = await prisma.gameOfficial.findMany({
+      where: { officialId: id },
+      select: { game: { select: { season: true } } },
+      distinct: ['gameId']
     })
-    const isActive = currentSeasonGames > 0
+    const activeSeasons = [...new Set(officialSeasonGames.map(go => go.game.season))].sort()
+    const isActive = activeSeasons.includes('2025-26')
 
     // Calculate ranks using efficient count queries
     // Rank = number of officials with MORE games + 1
@@ -654,6 +652,7 @@ export async function GET(
       refereeGamesRank,
       linespersonGamesRank,
       isActive,
+      activeSeasons,
       isOriginal57: official.original57 === 1,
       isAhl: official.ahl === 1,
       isEchl: official.echl === 1,

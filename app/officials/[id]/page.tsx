@@ -119,6 +119,7 @@ interface OfficialDetails {
   refereeGamesRank: number | null
   linespersonGamesRank: number | null
   isActive: boolean
+  activeSeasons: string[]
   isOriginal57: boolean
   isAhl: boolean
   isEchl: boolean
@@ -226,7 +227,8 @@ export default async function OfficialPage({
   const { season } = await searchParams
   const selectedSeason = season && season !== 'all' ? season : undefined
   const official = await getOfficial(id, selectedSeason)
-  const seasons = await getSeasons()
+  const allSeasons = await getSeasons()
+  const seasons = allSeasons.filter(s => official.activeSeasons.includes(s))
   const currentSeason = season || 'all'
 
   return (
