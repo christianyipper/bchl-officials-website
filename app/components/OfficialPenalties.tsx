@@ -75,7 +75,7 @@ export default function OfficialPenalties({ totalPIM, minors, majors, matches, m
   ]
 
   const row2 = [
-    { label: 'Misconduct', value: misconducts, rank: misconductsRank },
+    { label: 'Misc.', value: misconducts, rank: misconductsRank },
     { label: 'Game Misc.', value: gameMisconducts, rank: gameMisconductsRank },
   ]
 

@@ -1,4 +1,4 @@
-import { headers } from 'next/headers'
+import { prisma } from '@/lib/prisma'
 import OfficialsPageClient from '../components/OfficialsPageClient'
 
 interface OfficialSummary {
@@ -14,41 +14,64 @@ interface OfficialSummary {
   isPwhl: boolean
 }
 
-async function getBaseUrl() {
-  const headersList = await headers()
-  const host = headersList.get('host') || 'localhost:3000'
-  const protocol = host.includes('localhost') ? 'http' : 'https'
-  return `${protocol}://${host}`
-}
-
 async function getOfficials(season?: string): Promise<OfficialSummary[]> {
-  const baseUrl = await getBaseUrl()
-  const url = season
-    ? `${baseUrl}/api/officials?season=${season}`
-    : `${baseUrl}/api/officials`
-
-  const res = await fetch(url, {
-    next: { revalidate: 60 } // Cache for 60 seconds
+  const officials = await prisma.official.findMany({
+    include: {
+      games: {
+        include: {
+          game: {
+            include: {
+              homeTeam: true,
+              awayTeam: true
+            }
+          }
+        },
+        ...(season && {
+          where: {
+            game: {
+              season: season
+            }
+          }
+        })
+      }
+    },
+    orderBy: {
+      name: 'asc'
+    }
   })
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch officials')
+  const activeStatusMap = new Map<string, boolean>()
+  for (const official of officials) {
+    const currentSeasonCount = await prisma.gameOfficial.count({
+      where: {
+        officialId: official.id,
+        game: {
+          season: '2025-26'
+        }
+      }
+    })
+    activeStatusMap.set(official.id, currentSeasonCount > 0)
   }
 
-  return res.json()
+  return officials.map((official) => ({
+    id: official.id,
+    name: official.name,
+    totalGames: official.games.length,
+    refereeGames: official.games.filter(g => g.role === 'referee').length,
+    linespersonGames: official.games.filter(g => g.role === 'linesperson').length,
+    isActive: activeStatusMap.get(official.id) || false,
+    isOriginal57: official.original57 === 1,
+    isAhl: official.ahl === 1,
+    isEchl: official.echl === 1,
+    isPwhl: official.pwhl === 1
+  }))
 }
 
 async function getSeasons(): Promise<string[]> {
-  const baseUrl = await getBaseUrl()
-  const res = await fetch(`${baseUrl}/api/seasons`, {
-    next: { revalidate: 300 } // Cache for 5 minutes
+  const games = await prisma.game.findMany({
+    select: { season: true }
   })
-
-  if (!res.ok) {
-    return []
-  }
-
-  return res.json()
+  return [...new Set(games.map(g => g.season))].sort().reverse()
 }
 
 export default async function Team({
@@ -57,7 +80,6 @@ export default async function Team({
   searchParams: Promise<{ season?: string }>
 }) {
   const params = await searchParams
-  // Default to 2025-26 season if no season parameter or if season is undefined
   const season = params.season === 'all' ? undefined : (params.season || '2025-26')
   const officials = await getOfficials(season)
   const seasons = await getSeasons()
