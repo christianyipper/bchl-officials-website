@@ -48,6 +48,7 @@ export default function Nav() {
     { href: '/about', label: 'About' },
     { href: '/team', label: 'Team' },
     { href: '/combine', label: 'Combine' },
+    { href: '/stats', label: 'Stats' },
   ]
 
   const isActive = (href: string) => {
