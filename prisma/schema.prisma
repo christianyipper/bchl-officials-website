@@ -28,6 +28,8 @@ model Official {
   ahl         Int               @default(0) // 1 if has AHL experience, 0 otherwise
   echl        Int               @default(0) // 1 if has ECHL experience, 0 otherwise
   pwhl        Int               @default(0) // 1 if has PWHL experience, 0 otherwise
+  r_num       Int?              // referee number
+  l_num       Int?              // linesperson number
   games       GameOfficial[]
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt

@@ -22,6 +22,9 @@ export async function GET(request: Request) {
     select: {
       id: true,
       name: true,
+      original57: true,
+      r_num: true,
+      l_num: true,
       games: {
         where: seasonFilter,
         select: { role: true }
@@ -35,15 +38,18 @@ export async function GET(request: Request) {
       total_games: o.games.length,
       referee_games: o.games.filter(g => g.role === 'referee').length,
       linesperson_games: o.games.filter(g => g.role === 'linesperson').length,
+      original57: o.original57,
+      r_num: o.r_num ?? '',
+      l_num: o.l_num ?? '',
     }))
     .filter(o => o.total_games > 0)
     .sort((a, b) => b.total_games - a.total_games)
     .map((o, i) => ({ rank: i + 1, ...o }))
 
   if (format === 'csv') {
-    const header = 'rank,name,total_games,referee_games,linesperson_games'
+    const header = 'rank,name,total_games,referee_games,linesperson_games,original57,r_num,l_num'
     const lines = rows.map(r =>
-      `${r.rank},"${r.name}",${r.total_games},${r.referee_games},${r.linesperson_games}`
+      `${r.rank},"${r.name}",${r.total_games},${r.referee_games},${r.linesperson_games},${r.original57},${r.r_num},${r.l_num}`
     )
     return new Response([header, ...lines].join('\n'), {
       headers: {
