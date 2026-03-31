@@ -30,6 +30,7 @@ export default function AdminGames() {
   const [startDate, setStartDate] = useState(defaults.start)
   const [endDate, setEndDate] = useState(defaults.end)
   const [team, setTeam] = useState('')
+  const [dashOnly, setDashOnly] = useState(false)
   const [games, setGames] = useState<Game[]>([])
   const [allOfficials, setAllOfficials] = useState<OfficialOption[]>([])
   const [loading, setLoading] = useState(false)
@@ -48,6 +49,7 @@ export default function AdminGames() {
     try {
       const params = new URLSearchParams({ startDate, endDate })
       if (team) params.set('team', team)
+      if (dashOnly) params.set('dashOnly', '1')
       const res = await fetch(`/api/admin/games?${params}`)
       if (!res.ok) throw new Error(`${res.status}`)
       const data = await res.json()
@@ -106,7 +108,7 @@ export default function AdminGames() {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white p-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto mt-16">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Game Editor</h1>
           <a href="/admin/logout" className="text-gray-400 hover:text-white text-sm">Logout</a>
@@ -132,6 +134,15 @@ export default function AdminGames() {
               {TEAMS.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
+          <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={dashOnly}
+              onChange={e => setDashOnly(e.target.checked)}
+              className="accent-orange-500 w-4 h-4"
+            />
+            Has "-" role
+          </label>
           <button onClick={search} disabled={loading}
             className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded font-bold text-sm transition-colors disabled:opacity-50">
             {loading ? 'Loading...' : 'Search'}
@@ -168,6 +179,9 @@ export default function AdminGames() {
                   {game.officials.filter(o => o.role === 'linesperson').map(o => (
                     <span key={o.id} className="text-xs bg-green-900/50 text-green-300 px-2 py-0.5 rounded">L: {o.name}</span>
                   ))}
+                  {game.officials.filter(o => o.role !== 'referee' && o.role !== 'linesperson').map(o => (
+                    <span key={o.id} className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-0.5 rounded">-: {o.name}</span>
+                  ))}
                   {game.officials.length === 0 && (
                     <span className="text-xs text-red-400">No officials assigned</span>
                   )}
@@ -187,6 +201,7 @@ export default function AdminGames() {
                       >
                         <option value="referee">Referee</option>
                         <option value="linesperson">Linesperson</option>
+                        <option value="-">-</option>
                       </select>
                       <button
                         onClick={() => removeOfficial(game.id, o.id)}

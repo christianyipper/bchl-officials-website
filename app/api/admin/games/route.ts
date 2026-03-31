@@ -6,6 +6,7 @@ export async function GET(request: Request) {
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
   const team = searchParams.get('team')
+  const dashOnly = searchParams.get('dashOnly') === '1'
 
   const where: Record<string, unknown> = {}
   if (startDate || endDate) {
@@ -19,6 +20,9 @@ export async function GET(request: Request) {
       { homeTeam: { name: team } },
       { awayTeam: { name: team } }
     ]
+  }
+  if (dashOnly) {
+    where.officials = { some: { role: '-' } }
   }
 
   const games = await prisma.game.findMany({
