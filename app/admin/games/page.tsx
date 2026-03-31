@@ -179,8 +179,8 @@ export default function AdminGames() {
                   {game.officials.filter(o => o.role === 'linesperson').map(o => (
                     <span key={o.id} className="text-xs bg-green-900/50 text-green-300 px-2 py-0.5 rounded">L: {o.name}</span>
                   ))}
-                  {game.officials.filter(o => o.role !== 'referee' && o.role !== 'linesperson').map(o => (
-                    <span key={o.id} className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-0.5 rounded">-: {o.name}</span>
+                  {game.officials.filter(o => o.name === '-').map(o => (
+                    <span key={o.id} className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-0.5 rounded">Unknown {o.role}</span>
                   ))}
                   {game.officials.length === 0 && (
                     <span className="text-xs text-red-400">No officials assigned</span>

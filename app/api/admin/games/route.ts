@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     ]
   }
   if (dashOnly) {
-    where.officials = { some: { role: '-' } }
+    where.officials = { some: { official: { name: '-' } } }
   }
 
   const games = await prisma.game.findMany({
