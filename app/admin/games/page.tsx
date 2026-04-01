@@ -111,7 +111,10 @@ export default function AdminGames() {
       <div className="max-w-4xl mx-auto mt-16">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Game Editor</h1>
-          <a href="/admin/logout" className="text-gray-400 hover:text-white text-sm">Logout</a>
+          <div className="flex gap-4">
+            <a href="/admin/officials" className="text-orange-400 hover:text-orange-300 text-sm">Merge Officials</a>
+            <a href="/admin/logout" className="text-gray-400 hover:text-white text-sm">Logout</a>
+          </div>
         </div>
 
         {/* Filters */}
