@@ -49,7 +49,15 @@ export async function saveGameToDatabase(game: ScrapedGame) {
     })
 
     if (existingGame) {
-      console.log(`Game ${game.hockeytechId} already exists in database. Skipping.`)
+      const duration = computeDuration(game.startTime, game.endTime)
+      await prisma.game.update({
+        where: { hockeytechId: game.hockeytechId },
+        data: {
+          startTime: game.startTime,
+          endTime: game.endTime,
+          duration: duration,
+        }
+      })
       return { success: true, existed: true }
     }
 
