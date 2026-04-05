@@ -34,8 +34,7 @@ export async function scrapeGameReport(gameId: number): Promise<ScraperResult> {
     const location = extractField(bodyText, /PLAYED AT:\s*([^\n]+)/)
     const homeTeam = extractField(bodyText, /Home Team:\s*([^\n]+)/)
     const awayTeam = extractField(bodyText, /Visiting Team:\s*([^\n]+)/)
-    const startTime = extractField(bodyText, /Start:\s*(\d{1,2}:\d{2}\s*[AP]M)/)
-    const endTime = extractField(bodyText, /End:\s*(\d{1,2}:\d{2}\s*[AP]M)/)
+    const { startTime, endTime } = extractGameTimes($, bodyText)
 
     // Extract officials and penalties
     const officials = extractOfficials(bodyText)
@@ -71,6 +70,51 @@ export async function scrapeGameReport(gameId: number): Promise<ScraperResult> {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'
     }
+  }
+}
+
+function extractGameTimes($: cheerio.CheerioAPI, bodyText: string): { startTime: string | null; endTime: string | null } {
+  const timeRegex = /\d{1,2}:\d{2}\s*[AP]M/i
+
+  // Find the "TIME OF GAME" section and parse its table
+  // Structure: left column has "Start:" and "End:" labels, right column has times
+  let startTime: string | null = null
+  let endTime: string | null = null
+
+  $('td, th').each((_, el) => {
+    const text = $(el).text().trim()
+    if (text.toUpperCase().includes('TIME OF GAME')) {
+      // Walk the parent table to find times
+      const table = $(el).closest('table')
+      const times: string[] = []
+      table.find('td').each((__, cell) => {
+        const cellText = $(cell).text().trim()
+        const match = cellText.match(timeRegex)
+        if (match) times.push(match[0])
+      })
+      if (times.length >= 2) {
+        startTime = times[0]
+        endTime = times[1]
+      } else if (times.length === 1) {
+        startTime = times[0]
+      }
+      return false // stop iterating
+    }
+  })
+
+  // Fallback: regex on full body text (works when labels and times are adjacent)
+  if (!startTime) {
+    const m = bodyText.match(/Start:\s*(\d{1,2}:\d{2}\s*[AP]M)/i)
+    if (m) startTime = m[1]
+  }
+  if (!endTime) {
+    const m = bodyText.match(/End:\s*(\d{1,2}:\d{2}\s*[AP]M)/i)
+    if (m) endTime = m[1]
+  }
+
+  return {
+    startTime: startTime ? startTime.trim() : null,
+    endTime: endTime ? endTime.trim() : null
   }
 }
 

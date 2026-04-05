@@ -46,13 +46,34 @@ async function scrapeGameTimes(hockeytechId: number): Promise<{ startTime: strin
 
     const $ = cheerio.load(response.data)
     const bodyText = $('body').text()
+    const timeRegex = /\d{1,2}:\d{2}\s*[AP]M/i
 
-    const startMatch = bodyText.match(/Start:\s*(\d{1,2}:\d{2}\s*[AP]M)/i)
-    const endMatch = bodyText.match(/End:\s*(\d{1,2}:\d{2}\s*[AP]M)/i)
+    let startTime: string | null = null
+    let endTime: string | null = null
+
+    // Find TIME OF GAME table and extract times from cells in order
+    $('td, th').each((_, el) => {
+      const text = $(el).text().trim()
+      if (text.toUpperCase().includes('TIME OF GAME')) {
+        const table = $(el).closest('table')
+        const times: string[] = []
+        table.find('td').each((__, cell) => {
+          const m = $(cell).text().trim().match(timeRegex)
+          if (m) times.push(m[0])
+        })
+        if (times.length >= 2) { startTime = times[0]; endTime = times[1] }
+        else if (times.length === 1) { startTime = times[0] }
+        return false
+      }
+    })
+
+    // Fallback to regex
+    if (!startTime) { const m = bodyText.match(/Start:\s*(\d{1,2}:\d{2}\s*[AP]M)/i); if (m) startTime = m[1] }
+    if (!endTime) { const m = bodyText.match(/End:\s*(\d{1,2}:\d{2}\s*[AP]M)/i); if (m) endTime = m[1] }
 
     return {
-      startTime: startMatch ? startMatch[1].trim() : null,
-      endTime: endMatch ? endMatch[1].trim() : null
+      startTime: startTime ? (startTime as string).trim() : null,
+      endTime: endTime ? (endTime as string).trim() : null
     }
   } catch {
     return { startTime: null, endTime: null }

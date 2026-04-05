@@ -258,7 +258,7 @@ export async function GET(
         : Prisma.empty
 
       const avgResult = await prisma.$queryRaw<{ avg: number | null }[]>`
-        SELECT AVG(g.duration)::float as avg
+        SELECT AVG(CASE WHEN g.duration < 0 THEN g.duration + 1440 ELSE g.duration END)::float as avg
         FROM "GameOfficial" go
         JOIN "Game" g ON go."gameId" = g.id
         WHERE go."officialId" = ${id} AND g.duration IS NOT NULL${seasonDurationFilter}
@@ -266,24 +266,26 @@ export async function GET(
       const avg = avgResult[0]?.avg ?? null
 
       const longestResult = await prisma.$queryRaw<{ duration: number; date: Date; home: string; away: string; hockeytechId: number }[]>`
-        SELECT g.duration, g.date, ht.name as home, at.name as away, g."hockeytechId"
+        SELECT CASE WHEN g.duration < 0 THEN g.duration + 1440 ELSE g.duration END as duration,
+               g.date, ht.name as home, at.name as away, g."hockeytechId"
         FROM "GameOfficial" go
         JOIN "Game" g ON go."gameId" = g.id
         JOIN "Team" ht ON g."homeTeamId" = ht.id
         JOIN "Team" at ON g."awayTeamId" = at.id
         WHERE go."officialId" = ${id} AND g.duration IS NOT NULL${seasonDurationFilter}
-        ORDER BY g.duration DESC
+        ORDER BY (CASE WHEN g.duration < 0 THEN g.duration + 1440 ELSE g.duration END) DESC
         LIMIT 1
       `
 
       const shortestResult = await prisma.$queryRaw<{ duration: number; date: Date; home: string; away: string; hockeytechId: number }[]>`
-        SELECT g.duration, g.date, ht.name as home, at.name as away, g."hockeytechId"
+        SELECT CASE WHEN g.duration < 0 THEN g.duration + 1440 ELSE g.duration END as duration,
+               g.date, ht.name as home, at.name as away, g."hockeytechId"
         FROM "GameOfficial" go
         JOIN "Game" g ON go."gameId" = g.id
         JOIN "Team" ht ON g."homeTeamId" = ht.id
         JOIN "Team" at ON g."awayTeamId" = at.id
         WHERE go."officialId" = ${id} AND g.duration IS NOT NULL${seasonDurationFilter}
-        ORDER BY g.duration ASC
+        ORDER BY (CASE WHEN g.duration < 0 THEN g.duration + 1440 ELSE g.duration END) ASC
         LIMIT 1
       `
 
