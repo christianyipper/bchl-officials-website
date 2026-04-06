@@ -261,7 +261,7 @@ export async function GET(
         SELECT AVG(g.duration)::float as avg
         FROM "GameOfficial" go
         JOIN "Game" g ON go."gameId" = g.id
-        WHERE go."officialId" = ${id} AND g.duration > 0${seasonDurationFilter}
+        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL${seasonDurationFilter}
       `
       const avg = avgResult[0]?.avg ?? null
 
@@ -271,7 +271,7 @@ export async function GET(
         JOIN "Game" g ON go."gameId" = g.id
         JOIN "Team" ht ON g."homeTeamId" = ht.id
         JOIN "Team" at ON g."awayTeamId" = at.id
-        WHERE go."officialId" = ${id} AND g.duration > 0${seasonDurationFilter}
+        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL${seasonDurationFilter}
         ORDER BY g.duration DESC
         LIMIT 1
       `
@@ -282,7 +282,7 @@ export async function GET(
         JOIN "Game" g ON go."gameId" = g.id
         JOIN "Team" ht ON g."homeTeamId" = ht.id
         JOIN "Team" at ON g."awayTeamId" = at.id
-        WHERE go."officialId" = ${id} AND g.duration > 0${seasonDurationFilter}
+        WHERE go."officialId" = ${id} AND g.duration IS NOT NULL${seasonDurationFilter}
         ORDER BY g.duration ASC
         LIMIT 1
       `
