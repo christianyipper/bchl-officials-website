@@ -64,7 +64,7 @@ export default function AdminOfficials() {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white p-6">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto mt-16">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Merge Officials</h1>
           <a href="/admin/games" className="text-gray-400 hover:text-white text-sm">← Game Editor</a>

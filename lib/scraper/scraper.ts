@@ -93,8 +93,8 @@ function extractGameTimes($: cheerio.CheerioAPI, _bodyText: string): { startTime
   })
 
   return {
-    startTime: startTime ? startTime.trim() : null,
-    endTime: endTime ? endTime.trim() : null
+    startTime: (startTime as string | null)?.trim() ?? null,
+    endTime: (endTime as string | null)?.trim() ?? null
   }
 }
 
