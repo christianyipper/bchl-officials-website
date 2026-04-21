@@ -45,31 +45,24 @@ async function scrapeGameTimes(hockeytechId: number): Promise<{ startTime: strin
     })
 
     const $ = cheerio.load(response.data)
-    const bodyText = $('body').text()
     const timeRegex = /\d{1,2}:\d{2}\s*[AP]M/i
 
     let startTime: string | null = null
     let endTime: string | null = null
 
-    // Find TIME OF GAME table and extract times from cells in order
-    $('td, th').each((_, el) => {
-      const text = $(el).text().trim()
-      if (text.toUpperCase().includes('TIME OF GAME')) {
-        const table = $(el).closest('table')
-        const times: string[] = []
-        table.find('td').each((__, cell) => {
-          const m = $(cell).text().trim().match(timeRegex)
-          if (m) times.push(m[0])
-        })
-        if (times.length >= 2) { startTime = times[0]; endTime = times[1] }
-        else if (times.length === 1) { startTime = times[0] }
-        return false
+    // Structure: <td>&nbsp;Start:</td><td align="right">7:30 PM</td>
+    //            <td>&nbsp;End:</td>  <td align="right">10:00 PM</td>
+    $('td').each((_, el) => {
+      const text = $(el).text()
+      if (!startTime && text.includes('Start:')) {
+        const m = $(el).next('td').text().trim().match(timeRegex)
+        if (m) startTime = m[0]
+      }
+      if (!endTime && text.includes('End:')) {
+        const m = $(el).next('td').text().trim().match(timeRegex)
+        if (m) endTime = m[0]
       }
     })
-
-    // Fallback to regex
-    if (!startTime) { const m = bodyText.match(/Start:\s*(\d{1,2}:\d{2}\s*[AP]M)/i); if (m) startTime = m[1] }
-    if (!endTime) { const m = bodyText.match(/End:\s*(\d{1,2}:\d{2}\s*[AP]M)/i); if (m) endTime = m[1] }
 
     return {
       startTime: startTime ? (startTime as string).trim() : null,
@@ -82,12 +75,12 @@ async function scrapeGameTimes(hockeytechId: number): Promise<{ startTime: strin
 
 async function backfill() {
   const games = await prisma.game.findMany({
-    where: { duration: null },
+    where: { OR: [{ duration: null }, { duration: { lte: 0 } }] },
     select: { id: true, hockeytechId: true },
     orderBy: { hockeytechId: 'asc' }
   })
 
-  console.log(`Found ${games.length} games without duration data`)
+  console.log(`Found ${games.length} games with missing or invalid duration`)
 
   let updated = 0
   let failed = 0

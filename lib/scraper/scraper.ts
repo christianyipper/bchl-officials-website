@@ -73,44 +73,24 @@ export async function scrapeGameReport(gameId: number): Promise<ScraperResult> {
   }
 }
 
-function extractGameTimes($: cheerio.CheerioAPI, bodyText: string): { startTime: string | null; endTime: string | null } {
+function extractGameTimes($: cheerio.CheerioAPI, _bodyText: string): { startTime: string | null; endTime: string | null } {
   const timeRegex = /\d{1,2}:\d{2}\s*[AP]M/i
-
-  // Find the "TIME OF GAME" section and parse its table
-  // Structure: left column has "Start:" and "End:" labels, right column has times
   let startTime: string | null = null
   let endTime: string | null = null
 
-  $('td, th').each((_, el) => {
-    const text = $(el).text().trim()
-    if (text.toUpperCase().includes('TIME OF GAME')) {
-      // Walk the parent table to find times
-      const table = $(el).closest('table')
-      const times: string[] = []
-      table.find('td').each((__, cell) => {
-        const cellText = $(cell).text().trim()
-        const match = cellText.match(timeRegex)
-        if (match) times.push(match[0])
-      })
-      if (times.length >= 2) {
-        startTime = times[0]
-        endTime = times[1]
-      } else if (times.length === 1) {
-        startTime = times[0]
-      }
-      return false // stop iterating
+  // Structure: <td>&nbsp;Start:</td><td align="right">7:30 PM</td>
+  //            <td>&nbsp;End:</td>  <td align="right">10:00 PM</td>
+  $('td').each((_, el) => {
+    const text = $(el).text()
+    if (!startTime && text.includes('Start:')) {
+      const m = $(el).next('td').text().trim().match(timeRegex)
+      if (m) startTime = m[0]
+    }
+    if (!endTime && text.includes('End:')) {
+      const m = $(el).next('td').text().trim().match(timeRegex)
+      if (m) endTime = m[0]
     }
   })
-
-  // Fallback: regex on full body text (works when labels and times are adjacent)
-  if (!startTime) {
-    const m = bodyText.match(/Start:\s*(\d{1,2}:\d{2}\s*[AP]M)/i)
-    if (m) startTime = m[1]
-  }
-  if (!endTime) {
-    const m = bodyText.match(/End:\s*(\d{1,2}:\d{2}\s*[AP]M)/i)
-    if (m) endTime = m[1]
-  }
 
   return {
     startTime: startTime ? startTime.trim() : null,
