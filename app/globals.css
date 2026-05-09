@@ -104,6 +104,14 @@ body {
   }
 }
 
+p {
+  font-family: var(--font-onest), sans-serif;
+}
+
+nav p {
+  font-family: inherit;
+}
+
 h1 {
   font-size: 6rem;
   font-family: "zuume";

@@ -85,7 +85,7 @@ export default function Nav() {
     { href: '/about', label: 'About' },
     { href: '/team', label: 'Team' },
     { href: '/combine', label: 'Combine' },
-    // { href: '/rulebook.html', label: 'Rules' },
+    { href: '/rulebook', label: 'Rulebook' },
   ]
 
   const isActive = (href: string) => {
