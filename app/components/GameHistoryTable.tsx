@@ -159,50 +159,62 @@ export default function GameHistoryTable({
             </tr>
           </thead>
           <tbody className={`bg-black divide-y divide-[#1b263d] ${loading ? 'opacity-50' : ''}`}>
-            {games.map((game: GameDetails, index: number) => (
-              <tr
-                key={game.id}
-                onClick={() => window.open(`https://lscluster.hockeytech.com/game_reports/official-game-report.php?client_code=bchl&game_id=${game.hockeytechId}&lang_id=1`, '_blank')}
-                className="group hover:bg-orange-600 hover:text-white cursor-pointer transition-colors duration-300"
-              >
-                <td className={`px-6 py-4 whitespace-nowrap text-sm font-bold group-hover:text-white ${
-                  (totalGames - ((currentPage - 1) * 50) - index) % 100 === 0
-                    ? 'text-bchl-light-orange'
-                    : 'text-gray-600'
-                }`}>
-                  {totalGames - ((currentPage - 1) * 50) - index}
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-white text-sm">
-                    {new Date(game.date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </div>
-                  <div className="text-gray-400 text-xs group-hover:text-white">{game.location}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-white text-sm">H: {getCity(game.homeTeam)}</div>
-                  <div className="text-gray-400 text-sm group-hover:text-white">A: {getCity(game.awayTeam)}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-white text-sm">{game.homePIM} PIM</div>
-                  <div className="text-gray-400 text-sm group-hover:text-white">{game.awayPIM} PIM</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <span
-                    className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
-                      game.role === 'referee'
-                        ? 'bg-white text-black'
-                        : 'bg-transparent text-white border-2 border-white'
-                    }`}
-                  >
-                    {game.role === 'referee' ? 'Referee' : 'Linesperson'}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {games.map((game: GameDetails, index: number) => {
+              const url = `https://lscluster.hockeytech.com/game_reports/official-game-report.php?client_code=bchl&game_id=${game.hockeytechId}&lang_id=1`
+              const gameNum = totalGames - ((currentPage - 1) * 50) - index
+              return (
+                <tr
+                  key={game.id}
+                  className="group hover:bg-orange-600 hover:text-white transition-colors duration-300"
+                >
+                  <td className={`whitespace-nowrap text-sm font-bold group-hover:text-white ${
+                    gameNum % 100 === 0 ? 'text-bchl-light-orange' : 'text-gray-600'
+                  }`}>
+                    <a href={url} target="_blank" rel="noopener noreferrer" className="block px-6 py-4">
+                      {gameNum}
+                    </a>
+                  </td>
+                  <td>
+                    <a href={url} target="_blank" rel="noopener noreferrer" className="block px-6 py-4">
+                      <div className="text-white text-sm">
+                        {new Date(game.date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          timeZone: 'UTC'
+                        })}
+                      </div>
+                      <div className="text-gray-400 text-xs group-hover:text-white">{game.location}</div>
+                    </a>
+                  </td>
+                  <td>
+                    <a href={url} target="_blank" rel="noopener noreferrer" className="block px-6 py-4">
+                      <div className="text-white text-sm">H: {getCity(game.homeTeam)}</div>
+                      <div className="text-gray-400 text-sm group-hover:text-white">A: {getCity(game.awayTeam)}</div>
+                    </a>
+                  </td>
+                  <td>
+                    <a href={url} target="_blank" rel="noopener noreferrer" className="block px-6 py-4">
+                      <div className="text-white text-sm">{game.homePIM} PIM</div>
+                      <div className="text-gray-400 text-sm group-hover:text-white">{game.awayPIM} PIM</div>
+                    </a>
+                  </td>
+                  <td className="whitespace-nowrap text-sm">
+                    <a href={url} target="_blank" rel="noopener noreferrer" className="block px-6 py-4">
+                      <span
+                        className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
+                          game.role === 'referee'
+                            ? 'bg-white text-black'
+                            : 'bg-transparent text-white border-2 border-white'
+                        }`}
+                      >
+                        {game.role === 'referee' ? 'Referee' : 'Linesperson'}
+                      </span>
+                    </a>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

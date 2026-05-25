@@ -102,7 +102,7 @@ export default function AdminGames() {
 
   function formatDate(dateStr: string) {
     return new Date(dateStr).toLocaleDateString('en-CA', {
-      weekday: 'short', month: 'short', day: 'numeric'
+      weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC'
     })
   }
 

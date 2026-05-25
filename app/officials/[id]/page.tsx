@@ -456,7 +456,8 @@ export default async function OfficialPage({
                       {new Date(official.gameDurationStats.longestGame.date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
-                        day: 'numeric'
+                        day: 'numeric',
+                        timeZone: 'UTC'
                       })}
                     </div>
                   </div>
@@ -474,7 +475,8 @@ export default async function OfficialPage({
                       {new Date(official.gameDurationStats.shortestGame.date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
-                        day: 'numeric'
+                        day: 'numeric',
+                        timeZone: 'UTC'
                       })}
                     </div>
                   </div>

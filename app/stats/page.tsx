@@ -458,7 +458,7 @@ export default function StatsPage() {
                             {getCity(game.awayTeam)} @ {getCity(game.homeTeam)}
                           </span>
                           <span className="text-gray-500 text-xs w-24 shrink-0">
-                            {new Date(game.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            {new Date(game.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}
                           </span>
                           <div className="flex flex-wrap gap-x-3 min-w-0">
                               {[...game.officials].sort((a, b) => a.role === b.role ? 0 : a.role === 'referee' ? -1 : 1).map(o => (

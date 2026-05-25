@@ -98,7 +98,8 @@ export default async function GamesPage() {
                         {new Date(game.date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
-                          day: 'numeric'
+                          day: 'numeric',
+                          timeZone: 'UTC'
                         })}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">

@@ -74,8 +74,9 @@ export async function saveGameToDatabase(game: ScrapedGame) {
       create: { name: game.awayTeam }
     })
 
-    // Parse the date string (format: "Jan 1, 2026")
-    const gameDate = new Date(game.date)
+    // Parse the date string (format: "Jan 1, 2026") at noon UTC so the
+    // date is identical in every timezone (no midnight boundary crossing).
+    const gameDate = new Date(game.date + ' 12:00:00 UTC')
     const season = getSeasonFromDate(gameDate)
     const duration = computeDuration(game.startTime, game.endTime)
 
