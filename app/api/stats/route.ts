@@ -60,6 +60,7 @@ export async function GET(request: Request) {
     let aggressors = 0
     let faceoffViolations = 0
     const penaltyCounts: Record<string, number> = {}
+    const penaltyMinutes: Record<string, number> = {}
 
     for (const game of games) {
       for (const p of game.penalties) {
@@ -75,11 +76,12 @@ export async function GET(request: Request) {
         if (off.includes('aggressor')) aggressors++
         if (off.includes('face-off violation') || off.includes('faceoff violation')) faceoffViolations++
         penaltyCounts[p.offence] = (penaltyCounts[p.offence] || 0) + 1
+        penaltyMinutes[p.offence] = (penaltyMinutes[p.offence] || 0) + p.minutes
       }
     }
 
     const topPenalties = Object.entries(penaltyCounts)
-      .map(([offence, count]) => ({ offence, count }))
+      .map(([offence, count]) => ({ offence, count, pim: penaltyMinutes[offence] }))
       .sort((a, b) => b.count - a.count)
 
     // Top officials

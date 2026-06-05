@@ -50,7 +50,7 @@ interface PenaltyStats {
   minors: number; majors: number; matches: number; misconducts: number
   gameMisconducts: number; fights: number; instigators: number
   aggressors: number; faceoffViolations: number
-  topPenalties: { offence: string; count: number }[]
+  topPenalties: { offence: string; count: number; pim: number }[]
 }
 
 interface TeamStatsResult {
@@ -173,11 +173,13 @@ export default function StatsPage() {
   const displayedPenaltiesDesktop = ps ? (desktopExpanded ? ps.topPenalties : ps.topPenalties.slice(0, 12)) : []
   const desktopThird = Math.ceil(displayedPenaltiesDesktop.length / 3)
 
-  const renderPenaltyRow = (penalty: { offence: string; count: number }) => (
+  const renderPenaltyRow = (penalty: { offence: string; count: number; pim: number }) => (
     <div key={penalty.offence} className="flex flex-col gap-1">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-bold text-white">{penalty.offence}</span>
-        <span className="text-sm font-bold text-gray-400">{penalty.count}</span>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-bold text-white truncate">{penalty.offence}</span>
+        <span className="text-sm font-bold text-gray-400 shrink-0 tabular-nums">
+          {penalty.count} <span className="text-[#1b263d]">|</span> {penalty.pim} PIM
+        </span>
       </div>
       <div className="bg-[#1b263d] rounded-full h-2 overflow-hidden">
         <div className="bg-orange-600 h-full rounded-full" style={{ width: `${(penalty.count / maxPenaltyCount) * 100}%` }} />
