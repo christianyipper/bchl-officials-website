@@ -64,19 +64,39 @@ export async function GET(request: Request) {
 
     for (const game of games) {
       for (const p of game.penalties) {
-        totalPIM += p.minutes
         const off = p.offence.toLowerCase()
-        if (off.includes('fighting')) fights++
-        else if (off === 'match' || off.startsWith('match ')) matches++
-        else if (off.includes('game misconduct')) gameMisconducts++
-        else if (off.includes('misconduct')) misconducts++
-        else if (p.minutes === 5) majors++
-        else if (p.minutes === 2) minors++
+
+        // Use authoritative minute values per penalty type — game sheets often
+        // record misconducts and game misconducts as 0:00 because the team
+        // doesn't go short-handed, but they still count toward PIM.
+        let pimMinutes: number
+        if (off.includes('game misconduct')) {
+          gameMisconducts++
+          pimMinutes = 10
+        } else if (off.includes('misconduct')) {
+          misconducts++
+          pimMinutes = 10
+        } else if (off === 'match' || off.startsWith('match ')) {
+          matches++
+          pimMinutes = 5
+        } else if (off.includes('fighting')) {
+          fights++
+          pimMinutes = 5
+        } else if (p.minutes === 5) {
+          majors++
+          pimMinutes = 5
+        } else {
+          minors++
+          pimMinutes = 2
+        }
+
         if (off.includes('instigator')) instigators++
         if (off.includes('aggressor')) aggressors++
         if (off.includes('face-off violation') || off.includes('faceoff violation')) faceoffViolations++
+
+        totalPIM += pimMinutes
         penaltyCounts[p.offence] = (penaltyCounts[p.offence] || 0) + 1
-        penaltyMinutes[p.offence] = (penaltyMinutes[p.offence] || 0) + p.minutes
+        penaltyMinutes[p.offence] = (penaltyMinutes[p.offence] || 0) + pimMinutes
       }
     }
 
