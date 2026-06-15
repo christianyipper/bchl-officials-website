@@ -106,7 +106,7 @@ function SelectArrow() {
 
 export default function StatsPage() {
   const defaults = getDefaultDates()
-  const [activeTab, setActiveTab] = useState<'team' | 'season'>('team')
+  const [activeTab, setActiveTab] = useState<'team' | 'season'>('season')
 
   // Team Stats state
   const [team, setTeam] = useState('')

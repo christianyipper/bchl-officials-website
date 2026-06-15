@@ -40,51 +40,14 @@ function SlidingText({ text, isActive }: { text: string; isActive: boolean }) {
   )
 }
 
-function BarChartIcon({ isActive }: { isActive: boolean }) {
-  // Three bars: heights 40%, 70%, 55% of container
-  const bars = [
-    { height: 40, delay: '0ms' },
-    { height: 70, delay: '60ms' },
-    { height: 55, delay: '30ms' },
-  ]
-  return (
-    <svg
-      viewBox="0 0 18 14"
-      fill="none"
-      className="w-5 h-4"
-      aria-label="Stats"
-    >
-      {bars.map((bar, i) => {
-        const w = 4
-        const gap = 1
-        const x = i * (w + gap)
-        const fullH = 14
-        const barH = (bar.height / 100) * fullH
-        const y = fullH - barH
-        return (
-          <rect
-            key={i}
-            x={x}
-            y={y}
-            width={w}
-            height={barH}
-            className={`transition-all duration-300 ${isActive ? 'fill-white' : 'fill-white/40 group-hover:fill-white'}`}
-            style={{ transitionDelay: bar.delay }}
-          />
-        )
-      })}
-    </svg>
-  )
-}
 
 export default function Nav() {
   const pathname = usePathname()
 
   const links = [
     { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
     { href: '/team', label: 'Team' },
-    { href: '/combine', label: 'Combine' },
+    { href: '/stats', label: 'Stats' },
     { href: '/rulebook', label: 'Rulebook' },
   ]
 
@@ -94,8 +57,6 @@ export default function Nav() {
     }
     return pathname.startsWith(href)
   }
-
-  const statsActive = pathname.startsWith('/stats')
 
   return (
     <nav className="bg-black/20 backdrop-blur-lg z-50 fixed w-full">
@@ -131,16 +92,6 @@ export default function Nav() {
           </div>
 
           <div className="flex items-center justify-end w-44">
-            <Link
-              href="/stats"
-              className={`group relative flex w-12 h-12 items-center justify-center transition-colors duration-300 ${
-                statsActive ? 'border-t-4 border-orange-600' : ''
-              }`}
-              aria-label="Stats"
-            >
-              <BarChartIcon isActive={statsActive} />
-              <div className="w-full h-full absolute bg-orange-600 -translate-y-full group-hover:translate-y-0 transition-all duration-300 -z-10"></div>
-            </Link>
             <a
               href="https://www.instagram.com/bchlrefs/"
               target="_blank"
